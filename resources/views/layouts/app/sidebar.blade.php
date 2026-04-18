@@ -18,8 +18,11 @@
                 </flux:sidebar.group>
 
                 <flux:sidebar.group :heading="__('Permohonan')" class="grid">
-                    <flux:sidebar.item icon="exclamation-circle" :href="route('aduan-ict.create')" :current="request()->routeIs('aduan-ict.*')" wire:navigate>
+                    <flux:sidebar.item icon="exclamation-circle" :href="route('aduan-ict.create')" :current="request()->routeIs('aduan-ict.create')" wire:navigate>
                         {{ __('Aduan ICT') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="queue-list" :href="route('senarai-saya')" :current="request()->routeIs('senarai-saya') || request()->routeIs('aduan-ict.show')" wire:navigate>
+                        {{ __('Senarai Saya') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
