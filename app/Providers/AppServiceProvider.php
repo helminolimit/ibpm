@@ -4,8 +4,14 @@ namespace App\Providers;
 
 use App\Events\AduanBaru;
 use App\Events\AduanDihantar;
+use App\Events\AduanDitugaskan;
+use App\Events\AduanSelesai;
+use App\Events\StatusDikemaskini;
+use App\Listeners\HantarEmailAduanDitugaskan;
+use App\Listeners\HantarEmailAduanSelesai;
 use App\Listeners\HantarEmailNotifikasiAdmin;
 use App\Listeners\HantarEmailPengesahan;
+use App\Listeners\HantarEmailStatusKemaskini;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +42,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Event::listen(AduanDihantar::class, HantarEmailPengesahan::class);
         Event::listen(AduanBaru::class, HantarEmailNotifikasiAdmin::class);
+        Event::listen(StatusDikemaskini::class, HantarEmailStatusKemaskini::class);
+        Event::listen(AduanDitugaskan::class, HantarEmailAduanDitugaskan::class);
+        Event::listen(AduanSelesai::class, HantarEmailAduanSelesai::class);
     }
 
     /**

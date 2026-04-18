@@ -5,7 +5,9 @@
       "Bash(vendor/bin/pint --dirty --format agent)",
       "mcp__laravel-boost__application-info",
       "Bash(xargs grep *)",
-      "Bash(grep *)"
+      "Bash(grep *)",
+      "Bash(mcp__laravel-boost__database-schema --summary)",
+      "Bash(vendor/bin/pint *)"
     ]
   },
   "enableAllProjectMcpServers": true,

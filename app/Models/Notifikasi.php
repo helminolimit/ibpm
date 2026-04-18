@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['aduan_ict_id', 'jenis', 'penerima', 'status', 'ralat'])]
 class Notifikasi extends Model
 {
+    protected $table = 'notifikasi';
+
     protected function casts(): array
     {
         return [
