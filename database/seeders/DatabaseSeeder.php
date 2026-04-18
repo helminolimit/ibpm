@@ -18,6 +18,11 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'bahagian' => 'Bahagian Pengurusan Maklumat',
+            'jawatan' => 'Pegawai Teknologi Maklumat',
+            'no_telefon' => '03-88891234',
         ]);
+
+        $this->call(KategoriAduanSeeder::class);
     }
 }

@@ -16,6 +16,12 @@
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Permohonan')" class="grid">
+                    <flux:sidebar.item icon="exclamation-circle" :href="route('aduan-ict.create')" :current="request()->routeIs('aduan-ict.*')" wire:navigate>
+                        {{ __('Aduan ICT') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />
