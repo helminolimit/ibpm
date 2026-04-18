@@ -6,6 +6,7 @@ use App\Events\AduanDihantar;
 use App\Livewire\Permohonan\AduanIctForm;
 use App\Models\AduanIct;
 use App\Models\KategoriAduan;
+use App\Models\LampiranAduan;
 use App\Models\StatusLog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -166,7 +167,7 @@ it('saves attachment when file is uploaded', function () {
         ->set('tajuk', 'Aduan dengan lampiran')
         ->set('keterangan', 'Keterangan.')
         ->set('noTelefon', '03-12345678')
-        ->set('lampiran', $file)
+        ->set('lampirans', [$file])
         ->set('step', 2)
         ->call('hantar');
 
@@ -177,15 +178,109 @@ it('saves attachment when file is uploaded', function () {
     ]);
 });
 
+it('stores attachment in aduan/year/month directory', function () {
+    actingAs($this->user);
+    Event::fake();
+    Storage::fake('public');
+
+    $file = UploadedFile::fake()->create('gambar.jpg', 512, 'image/jpeg');
+
+    Livewire::test(AduanIctForm::class)
+        ->set('kategoriId', $this->kategori->id)
+        ->set('lokasi', 'Bilik 101')
+        ->set('tajuk', 'Aduan dengan lampiran')
+        ->set('keterangan', 'Keterangan.')
+        ->set('noTelefon', '03-12345678')
+        ->set('lampirans', [$file])
+        ->set('step', 2)
+        ->call('hantar');
+
+    $lampiran = LampiranAduan::first();
+    expect($lampiran->path)->toStartWith('aduan/'.now()->format('Y/m'));
+});
+
+it('saves multiple attachments to database', function () {
+    actingAs($this->user);
+    Event::fake();
+    Storage::fake('public');
+
+    $file1 = UploadedFile::fake()->create('bukti1.pdf', 512, 'application/pdf');
+    $file2 = UploadedFile::fake()->create('gambar.jpg', 512, 'image/jpeg');
+
+    Livewire::test(AduanIctForm::class)
+        ->set('kategoriId', $this->kategori->id)
+        ->set('lokasi', 'Bilik 101')
+        ->set('tajuk', 'Aduan dua lampiran')
+        ->set('keterangan', 'Keterangan.')
+        ->set('noTelefon', '03-12345678')
+        ->set('lampirans', [$file1, $file2])
+        ->set('step', 2)
+        ->call('hantar');
+
+    $aduan = AduanIct::first();
+    expect(LampiranAduan::where('aduan_ict_id', $aduan->id)->count())->toBe(2);
+});
+
 it('rejects attachment larger than 5MB', function () {
     actingAs($this->user);
 
     $largeFile = UploadedFile::fake()->create('besar.pdf', 6144, 'application/pdf');
 
     Livewire::test(AduanIctForm::class)
-        ->set('lampiran', $largeFile)
-        ->call('teruskan')
-        ->assertHasErrors(['lampiran']);
+        ->set('lampiranBaru', $largeFile)
+        ->assertHasErrors(['lampiranBaru']);
+});
+
+it('rejects unsupported file type', function () {
+    actingAs($this->user);
+
+    $badFile = UploadedFile::fake()->create('script.exe', 100, 'application/octet-stream');
+
+    Livewire::test(AduanIctForm::class)
+        ->set('lampiranBaru', $badFile)
+        ->assertHasErrors(['lampiranBaru']);
+});
+
+it('adds a valid file to lampiran list via updatedLampiranBaru', function () {
+    actingAs($this->user);
+    Storage::fake('public');
+
+    $file = UploadedFile::fake()->create('bukti.pdf', 512, 'application/pdf');
+
+    Livewire::test(AduanIctForm::class)
+        ->set('lampiranBaru', $file)
+        ->assertSet('lampiranBaru', null)
+        ->assertSet('lampirans', fn ($value) => count($value) === 1);
+});
+
+it('can remove an attachment from the list', function () {
+    actingAs($this->user);
+    Storage::fake('public');
+
+    $file = UploadedFile::fake()->create('bukti.pdf', 512, 'application/pdf');
+
+    Livewire::test(AduanIctForm::class)
+        ->set('lampirans', [$file])
+        ->call('removeLampiran', 0)
+        ->assertSet('lampirans', []);
+});
+
+it('rejects more than 5 attachments', function () {
+    actingAs($this->user);
+    Storage::fake('public');
+
+    $files = collect(range(1, 5))
+        ->map(fn ($i) => UploadedFile::fake()->create("file{$i}.pdf", 100, 'application/pdf'))
+        ->all();
+
+    $component = Livewire::test(AduanIctForm::class)
+        ->set('lampirans', $files);
+
+    $extra = UploadedFile::fake()->create('extra.pdf', 100, 'application/pdf');
+
+    $component->set('lampiranBaru', $extra)
+        ->assertHasErrors(['lampiranBaru'])
+        ->assertSet('lampirans', fn ($value) => count($value) === 5);
 });
 
 it('shows unit BPM when category is selected', function () {

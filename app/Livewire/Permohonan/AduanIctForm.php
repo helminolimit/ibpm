@@ -12,9 +12,11 @@ use App\Models\StatusLog;
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 #[Title('Hantar Aduan ICT')]
@@ -34,7 +36,10 @@ class AduanIctForm extends Component
 
     public string $noTelefon = '';
 
-    public $lampiran = null;
+    /** @var array<int, TemporaryUploadedFile> */
+    public array $lampirans = [];
+
+    public $lampiranBaru = null;
 
     public ?string $noTiket = null;
 
@@ -46,7 +51,8 @@ class AduanIctForm extends Component
             'tajuk' => ['required', 'string', 'max:255'],
             'keterangan' => ['required', 'string'],
             'noTelefon' => ['required', 'string', 'max:20'],
-            'lampiran' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'lampiranBaru' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'lampirans.*' => ['file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ];
     }
 
@@ -60,8 +66,8 @@ class AduanIctForm extends Component
             'tajuk.max' => 'Tajuk aduan tidak boleh melebihi 255 aksara.',
             'keterangan.required' => 'Sila isi keterangan masalah.',
             'noTelefon.required' => 'Sila isi no. telefon.',
-            'lampiran.mimes' => 'Fail lampiran mestilah JPG, PNG, atau PDF.',
-            'lampiran.max' => 'Saiz fail lampiran tidak boleh melebihi 5MB.',
+            'lampiranBaru.mimes' => 'Jenis fail tidak disokong. Hanya JPG, PNG, dan PDF dibenarkan.',
+            'lampiranBaru.max' => 'Fail melebihi had saiz 5MB. Sila kompres atau pilih fail lain.',
         ];
     }
 
@@ -84,6 +90,31 @@ class AduanIctForm extends Component
         }
 
         return $this->kategoris->firstWhere('id', $this->kategoriId);
+    }
+
+    public function updatedLampiranBaru(): void
+    {
+        if (! $this->lampiranBaru) {
+            return;
+        }
+
+        if (count($this->lampirans) >= 5) {
+            $this->addError('lampiranBaru', 'Bilangan lampiran tidak boleh melebihi 5 fail.');
+            $this->reset('lampiranBaru');
+
+            return;
+        }
+
+        $this->validateOnly('lampiranBaru');
+
+        $this->lampirans[] = $this->lampiranBaru;
+        $this->reset('lampiranBaru');
+    }
+
+    public function removeLampiran(int $index): void
+    {
+        array_splice($this->lampirans, $index, 1);
+        $this->lampirans = array_values($this->lampirans);
     }
 
     public function teruskan(): void
@@ -122,15 +153,19 @@ class AduanIctForm extends Component
                 'user_id' => Auth::id(),
             ]);
 
-            if ($this->lampiran) {
-                $path = $this->lampiran->store('lampiran-aduan', 'public');
+            foreach ($this->lampirans as $lampiran) {
+                $path = $lampiran->storeAs(
+                    'aduan/'.now()->format('Y/m'),
+                    Str::uuid().'.'.$lampiran->getClientOriginalExtension(),
+                    'public'
+                );
 
                 LampiranAduan::create([
                     'aduan_ict_id' => $aduan->id,
-                    'nama_fail' => $this->lampiran->getClientOriginalName(),
+                    'nama_fail' => $lampiran->getClientOriginalName(),
                     'path' => $path,
-                    'jenis_fail' => $this->lampiran->getMimeType(),
-                    'saiz' => $this->lampiran->getSize(),
+                    'jenis_fail' => $lampiran->getMimeType(),
+                    'saiz' => $lampiran->getSize(),
                 ]);
             }
 

@@ -90,16 +90,82 @@
 
                     {{-- Lampiran --}}
                     <flux:field>
-                        <flux:label>Lampiran</flux:label>
-                        <flux:input wire:model="lampiran" type="file" accept=".jpg,.jpeg,.png,.pdf" />
-                        <flux:description>JPG, PNG, PDF sahaja. Had saiz: 5MB.</flux:description>
-                        <flux:error name="lampiran" />
-                        @if ($lampiran)
-                            <flux:text size="sm" class="mt-1 text-green-600 dark:text-green-400">
-                                <flux:icon name="check-circle" class="inline size-4" />
-                                {{ $lampiran->getClientOriginalName() }}
-                            </flux:text>
+                        <flux:label>Lampiran <flux:badge size="sm" color="zinc" class="ml-1">Pilihan</flux:badge></flux:label>
+
+                        {{-- Uploaded file list --}}
+                        @if (count($lampirans) > 0)
+                            <div class="space-y-2">
+                                @foreach ($lampirans as $i => $lampiran)
+                                    <div wire:key="lampiran-{{ $i }}" class="flex items-center gap-3 rounded-md border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900">
+                                        <flux:icon
+                                            name="{{ str_starts_with($lampiran->getMimeType() ?? '', 'image/') ? 'photo' : 'document' }}"
+                                            class="size-5 shrink-0 text-zinc-400"
+                                        />
+                                        <div class="min-w-0 flex-1">
+                                            <p class="truncate text-sm font-medium text-zinc-700 dark:text-zinc-300">{{ $lampiran->getClientOriginalName() }}</p>
+                                            <p class="text-xs text-zinc-400">
+                                                {{ $lampiran->getSize() >= 1048576 ? number_format($lampiran->getSize() / 1048576, 1).' MB' : number_format($lampiran->getSize() / 1024, 1).' KB' }}
+                                            </p>
+                                        </div>
+                                        <flux:button
+                                            wire:click="removeLampiran({{ $i }})"
+                                            size="sm"
+                                            variant="ghost"
+                                            icon="x-mark"
+                                            inset="top bottom"
+                                            class="shrink-0 text-zinc-400 hover:text-red-500"
+                                        />
+                                    </div>
+                                @endforeach
+                            </div>
                         @endif
+
+                        {{-- Upload zone (hidden when max reached) --}}
+                        @if (count($lampirans) < 5)
+                            <div
+                                x-data="{ dragging: false }"
+                                x-on:dragover.prevent="dragging = true"
+                                x-on:dragleave.prevent="dragging = false"
+                                x-on:drop.prevent="
+                                    dragging = false;
+                                    let file = $event.dataTransfer.files[0];
+                                    if (file) {
+                                        let dt = new DataTransfer();
+                                        dt.items.add(file);
+                                        $refs.lampiranInput.files = dt.files;
+                                        $refs.lampiranInput.dispatchEvent(new Event('change'));
+                                    }
+                                "
+                                :class="dragging ? 'border-blue-400 bg-blue-50 dark:bg-blue-950 dark:border-blue-500' : 'border-zinc-300 dark:border-zinc-600 hover:border-zinc-400'"
+                                class="relative cursor-pointer rounded-lg border-2 border-dashed p-6 text-center transition"
+                                @click="$refs.lampiranInput.click()"
+                            >
+                                <input
+                                    x-ref="lampiranInput"
+                                    type="file"
+                                    wire:model="lampiranBaru"
+                                    accept=".jpg,.jpeg,.png,.pdf"
+                                    class="sr-only"
+                                />
+                                <div wire:loading wire:target="lampiranBaru" class="flex flex-col items-center gap-2">
+                                    <flux:icon name="arrow-path" class="size-6 animate-spin text-zinc-400" />
+                                    <flux:text size="sm" class="text-zinc-400">Memuat naik...</flux:text>
+                                </div>
+                                <div wire:loading.remove wire:target="lampiranBaru" class="flex flex-col items-center gap-2">
+                                    <flux:icon name="arrow-up-tray" class="size-8 text-zinc-400" />
+                                    <flux:text class="text-zinc-500">Klik atau seret fail ke sini</flux:text>
+                                    <flux:text size="sm" class="text-zinc-400">JPG, PNG, PDF • Maks. 5MB setiap fail</flux:text>
+                                </div>
+                            </div>
+                        @else
+                            <div class="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-600 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-400">
+                                <flux:icon name="exclamation-triangle" class="size-4 shrink-0" />
+                                <span>Had maksimum 5 fail telah dicapai.</span>
+                            </div>
+                        @endif
+
+                        <flux:error name="lampiranBaru" />
+                        <flux:description>JPG, PNG, PDF sahaja. Had saiz: 5MB setiap fail. Maksimum 5 fail.</flux:description>
                     </flux:field>
 
                     <div class="flex items-center justify-end gap-3 pt-2">
@@ -179,10 +245,23 @@
                                 <flux:text size="sm" class="text-zinc-500">Keterangan Masalah</flux:text>
                                 <flux:text class="whitespace-pre-wrap">{{ $keterangan }}</flux:text>
                             </div>
-                            @if ($lampiran)
+                            @if (count($lampirans) > 0)
                                 <div class="sm:col-span-2">
-                                    <flux:text size="sm" class="text-zinc-500">Lampiran</flux:text>
-                                    <flux:text class="font-medium">{{ $lampiran->getClientOriginalName() }}</flux:text>
+                                    <flux:text size="sm" class="text-zinc-500">Lampiran ({{ count($lampirans) }} fail)</flux:text>
+                                    <div class="mt-1 space-y-1">
+                                        @foreach ($lampirans as $lampiran)
+                                            <div class="flex items-center gap-2">
+                                                <flux:icon
+                                                    name="{{ str_starts_with($lampiran->getMimeType() ?? '', 'image/') ? 'photo' : 'document' }}"
+                                                    class="size-4 shrink-0 text-zinc-400"
+                                                />
+                                                <flux:text class="font-medium">{{ $lampiran->getClientOriginalName() }}</flux:text>
+                                                <flux:text size="sm" class="text-zinc-400">
+                                                    ({{ $lampiran->getSize() >= 1048576 ? number_format($lampiran->getSize() / 1048576, 1).' MB' : number_format($lampiran->getSize() / 1024, 1).' KB' }})
+                                                </flux:text>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endif
                         </div>
