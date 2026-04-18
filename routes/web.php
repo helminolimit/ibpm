@@ -22,6 +22,7 @@ Route::middleware(['auth', 'verified', 'role:pentadbir,superadmin'])
     ->group(function () {
         Route::livewire('aduan', Admin\SenaraiAduan::class)->name('aduan.index');
         Route::livewire('aduan/{id}', Admin\ButiranAduan::class)->name('aduan.show');
+        Route::livewire('laporan', Admin\LaporanAduan::class)->name('laporan.index');
     });
 
 require __DIR__.'/settings.php';

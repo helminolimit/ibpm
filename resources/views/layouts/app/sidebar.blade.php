@@ -49,6 +49,14 @@
                                 @endif
                             </div>
                         </flux:sidebar.item>
+                        <flux:sidebar.item
+                            icon="chart-bar"
+                            :href="route('admin.laporan.index')"
+                            :current="request()->routeIs('admin.laporan.*')"
+                            wire:navigate
+                        >
+                            {{ __('Jana Laporan') }}
+                        </flux:sidebar.item>
                     </flux:sidebar.group>
                 @endif
             </flux:sidebar.nav>
