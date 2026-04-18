@@ -2,12 +2,16 @@
 
 namespace App\Livewire\Admin;
 
+use App\Enums\RolePengguna;
 use App\Enums\StatusAduan;
+use App\Events\AduanDitugaskan;
 use App\Events\AduanSelesai;
 use App\Events\StatusDikemaskini;
 use App\Models\AduanIct;
 use App\Models\StatusLog;
+use App\Models\User;
 use Flux\Flux;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -22,6 +26,10 @@ class ButiranAduan extends Component
     public string $statusBaru = '';
 
     public string $catatanTindakan = '';
+
+    public string $teknicianId = '';
+
+    public string $catatanArahan = '';
 
     public function mount(int $id): void
     {
@@ -57,6 +65,18 @@ class ButiranAduan extends Component
                 fn ($k) => $k->where('unit_bpm', $user->bahagian)
             ))
             ->findOrFail($this->aduanId);
+    }
+
+    /** @return Collection<int, User> */
+    #[Computed]
+    public function availableTeknicians(): Collection
+    {
+        $user = Auth::user();
+
+        return User::where('role', RolePengguna::Teknician)
+            ->when($user->isPentadbir(), fn ($q) => $q->where('bahagian', $user->bahagian))
+            ->orderBy('name')
+            ->get();
     }
 
     /** @return StatusAduan[] */
@@ -154,6 +174,63 @@ class ButiranAduan extends Component
 
         Flux::modals()->close();
         Flux::toast(variant: 'success', text: 'Aduan berjaya dibuka semula.');
+    }
+
+    public function tugaskanTeknician(): void
+    {
+        $this->validate([
+            'teknicianId' => [
+                'required',
+                Rule::exists('users', 'id')->where('role', RolePengguna::Teknician->value),
+            ],
+            'catatanArahan' => ['nullable', 'max:500'],
+        ], [
+            'teknicianId.required' => 'Sila pilih teknician.',
+            'teknicianId.exists' => 'Teknician yang dipilih tidak sah.',
+        ]);
+
+        $aduan = AduanIct::with('kategori')->findOrFail($this->aduanId);
+        $user = Auth::user();
+
+        if ($user->isPentadbir()) {
+            abort_unless($aduan->kategori->unit_bpm === $user->bahagian, 403);
+        }
+
+        abort_unless(
+            in_array($aduan->status, [StatusAduan::Baru, StatusAduan::DalamProses]),
+            422
+        );
+
+        $teknician = User::findOrFail((int) $this->teknicianId);
+
+        if ($user->isPentadbir()) {
+            abort_unless($teknician->bahagian === $user->bahagian, 403);
+        }
+
+        $statusSemasa = $aduan->status;
+
+        $aduan->update(['pentadbir_id' => $teknician->id]);
+
+        $catatan = 'Ditugaskan kepada: '.$teknician->name;
+        if ($this->catatanArahan) {
+            $catatan .= '. '.$this->catatanArahan;
+        }
+
+        StatusLog::create([
+            'aduan_ict_id' => $aduan->id,
+            'status_lama' => $statusSemasa->value,
+            'status' => $statusSemasa->value,
+            'catatan' => $catatan,
+            'user_id' => $user->id,
+        ]);
+
+        AduanDitugaskan::dispatch($aduan->fresh(), $teknician, $this->catatanArahan ?: null);
+
+        $this->reset('teknicianId', 'catatanArahan');
+        unset($this->aduan);
+
+        Flux::modals()->close();
+        Flux::toast(variant: 'success', text: 'Teknician berjaya ditugaskan.');
     }
 
     public function render()

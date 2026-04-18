@@ -26,7 +26,7 @@ class HantarEmailAduanDitugaskan implements ShouldQueue
         $penerima = $teknician->email;
 
         try {
-            Mail::to($penerima)->send(new AduanDitugaskanMail($aduan, $teknician));
+            Mail::to($penerima)->send(new AduanDitugaskanMail($aduan, $teknician, $event->catatanArahan));
 
             Notifikasi::create([
                 'aduan_ict_id' => $aduan->id,

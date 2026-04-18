@@ -54,6 +54,11 @@ class UserFactory extends Factory
         return $this->state(['role' => RolePengguna::Superadmin]);
     }
 
+    public function teknician(string $bahagian = 'Unit Infrastruktur'): static
+    {
+        return $this->state(['role' => RolePengguna::Teknician, 'bahagian' => $bahagian]);
+    }
+
     /**
      * Indicate that the model's email address should be unverified.
      */

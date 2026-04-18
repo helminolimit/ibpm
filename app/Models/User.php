@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->role === RolePengguna::Superadmin;
     }
 
+    public function isTeknician(): bool
+    {
+        return $this->role === RolePengguna::Teknician;
+    }
+
     public function isAdmin(): bool
     {
         return $this->isPentadbir() || $this->isSuperadmin();

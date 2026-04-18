@@ -14,5 +14,6 @@ class AduanDitugaskan
     public function __construct(
         public readonly AduanIct $aduan,
         public readonly User $teknician,
+        public readonly ?string $catatanArahan = null,
     ) {}
 }

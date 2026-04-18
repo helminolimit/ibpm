@@ -17,6 +17,10 @@ Aduan ICT berikut telah ditugaskan kepada anda untuk tindakan lanjut.
 **Tarikh Mohon:** {{ $aduan->created_at->format('d/m/Y H:i') }}
 </x-mail::panel>
 
+@if ($catatanArahan)
+**Arahan Pentadbir:** {{ $catatanArahan }}
+
+@endif
 Sila log masuk ke portal ICTServe untuk mengambil tindakan ke atas aduan ini.
 
 Terima kasih,<br>

@@ -18,6 +18,7 @@ class AduanDitugaskanMail extends Mailable implements ShouldQueue
     public function __construct(
         public readonly AduanIct $aduan,
         public readonly User $teknician,
+        public readonly ?string $catatanArahan = null,
     ) {}
 
     public function envelope(): Envelope

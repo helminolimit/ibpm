@@ -154,6 +154,60 @@
                     </div>
                 @endif
 
+                {{-- Penugasan Teknician --}}
+                @if (in_array($this->aduan->status, [\App\Enums\StatusAduan::Baru, \App\Enums\StatusAduan::DalamProses]))
+                    <div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
+                        <flux:heading size="sm" class="mb-4 uppercase tracking-wide text-zinc-500">Penugasan Teknician</flux:heading>
+                        <div class="space-y-4">
+
+                            @if ($this->aduan->pentadbir)
+                                <div class="flex items-center gap-2 rounded-md bg-zinc-50 px-3 py-2 dark:bg-zinc-800">
+                                    <flux:icon name="user-circle" class="size-4 shrink-0 text-zinc-400" />
+                                    <flux:text size="sm">
+                                        <span class="font-medium">{{ $this->aduan->pentadbir->name }}</span>
+                                        <span class="ml-1 text-zinc-400">(semasa)</span>
+                                    </flux:text>
+                                </div>
+                            @endif
+
+                            @if ($this->availableTeknicians->isEmpty())
+                                <flux:text size="sm" class="text-zinc-400">
+                                    Tiada teknician tersedia dalam unit ini. Sila hubungi Superadmin.
+                                </flux:text>
+                            @else
+                                <div>
+                                    <flux:select wire:model="teknicianId" label="Pilih Teknician">
+                                        <flux:select.option value="">— Pilih Teknician —</flux:select.option>
+                                        @foreach ($this->availableTeknicians as $tek)
+                                            <flux:select.option value="{{ $tek->id }}">{{ $tek->name }}</flux:select.option>
+                                        @endforeach
+                                    </flux:select>
+                                    @error('teknicianId')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <flux:textarea
+                                        wire:model="catatanArahan"
+                                        label="Arahan Pentadbir (pilihan)"
+                                        placeholder="Arahan atau maklumat tambahan untuk teknician..."
+                                        rows="3"
+                                    />
+                                    @error('catatanArahan')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <flux:modal.trigger name="confirm-tugaskan">
+                                    <flux:button variant="primary" icon="user-plus" class="w-full">
+                                        {{ $this->aduan->pentadbir ? 'Tukar Teknician' : 'Tugaskan Teknician' }}
+                                    </flux:button>
+                                </flux:modal.trigger>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Maklumat Pemohon --}}
                 <div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
                     <flux:heading size="sm" class="mb-4 uppercase tracking-wide text-zinc-500">Maklumat Pemohon</flux:heading>
@@ -247,6 +301,37 @@
                     <flux:button variant="ghost">Batal</flux:button>
                 </flux:modal.close>
                 <flux:button variant="primary" wire:click="kemaskiniStatus" @click="loading = true">Simpan</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- Confirmation modal: Tugaskan Teknician --}}
+    <flux:modal
+        name="confirm-tugaskan"
+        class="min-w-[22rem]"
+        :closable="false"
+        x-data="{ loading: false }"
+        x-on:cancel="loading && $event.preventDefault()"
+        x-on:livewire:commit.window="loading = false"
+    >
+        <div class="relative space-y-6">
+            <div
+                wire:loading
+                wire:target="tugaskanTeknician"
+                class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/80 dark:bg-zinc-900/80"
+            >
+                <flux:icon name="arrow-path" class="size-6 animate-spin text-zinc-500" />
+            </div>
+            <div>
+                <flux:heading size="lg">Tugaskan teknician?</flux:heading>
+                <flux:subheading>Teknician yang dipilih akan menerima emel notifikasi sebagai arahan kerja.</flux:subheading>
+            </div>
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost">Batal</flux:button>
+                </flux:modal.close>
+                <flux:button variant="primary" wire:click="tugaskanTeknician" @click="loading = true">Tugaskan</flux:button>
             </div>
         </div>
     </flux:modal>
