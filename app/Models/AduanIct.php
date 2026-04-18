@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['no_tiket', 'user_id', 'kategori_aduan_id', 'lokasi', 'tajuk', 'keterangan', 'no_telefon', 'status'])]
+#[Fillable(['no_tiket', 'user_id', 'kategori_aduan_id', 'lokasi', 'tajuk', 'keterangan', 'no_telefon', 'status', 'pentadbir_id', 'catatan_pentadbir', 'tarikh_selesai'])]
 class AduanIct extends Model
 {
     /** @use HasFactory<AduanIctFactory> */
@@ -22,12 +22,18 @@ class AduanIct extends Model
     {
         return [
             'status' => StatusAduan::class,
+            'tarikh_selesai' => 'datetime',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function pentadbir(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'pentadbir_id');
     }
 
     public function kategori(): BelongsTo

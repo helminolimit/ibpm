@@ -38,6 +38,6 @@ class AduanIctFactory extends Factory
 
     public function selesai(): static
     {
-        return $this->state(['status' => StatusAduan::Selesai]);
+        return $this->state(['status' => StatusAduan::Selesai, 'tarikh_selesai' => now()]);
     }
 }

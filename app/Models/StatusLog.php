@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['aduan_ict_id', 'status', 'catatan', 'user_id'])]
+#[Fillable(['aduan_ict_id', 'status_lama', 'status', 'catatan', 'user_id'])]
 class StatusLog extends Model
 {
     protected $table = 'status_log';
@@ -15,6 +15,7 @@ class StatusLog extends Model
     protected function casts(): array
     {
         return [
+            'status_lama' => StatusAduan::class,
             'status' => StatusAduan::class,
         ];
     }

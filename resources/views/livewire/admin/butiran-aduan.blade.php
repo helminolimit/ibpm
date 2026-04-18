@@ -21,6 +21,15 @@
                     Dihantar pada {{ $this->aduan->created_at->format('d/m/Y, H:i') }}
                 </flux:text>
             </div>
+
+            {{-- Header actions --}}
+            <div>
+                @if ($this->aduan->status === \App\Enums\StatusAduan::Selesai)
+                    <flux:modal.trigger name="confirm-buka-semula">
+                        <flux:button variant="outline" icon="arrow-path">Buka Semula</flux:button>
+                    </flux:modal.trigger>
+                @endif
+            </div>
         </div>
 
         <div class="grid gap-6 lg:grid-cols-3">
@@ -63,7 +72,7 @@
                 <div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
                     <flux:heading size="sm" class="mb-4 uppercase tracking-wide text-zinc-500">Sejarah Status</flux:heading>
                     <div class="space-y-0">
-                        @foreach ($this->aduan->statusLogs as $log)
+                        @forelse ($this->aduan->statusLogs as $log)
                             <div class="relative flex gap-4">
                                 @if (! $loop->last)
                                     <div class="absolute bottom-0 left-4 top-8 w-px bg-zinc-200 dark:bg-zinc-700"></div>
@@ -99,7 +108,9 @@
                                     @endif
                                 </div>
                             </div>
-                        @endforeach
+                        @empty
+                            <flux:text size="sm" class="text-zinc-400">Tiada sejarah status.</flux:text>
+                        @endforelse
                     </div>
                 </div>
 
@@ -107,6 +118,41 @@
 
             {{-- Sidebar (1/3 width) --}}
             <div class="space-y-6">
+
+                {{-- Kemaskini Status --}}
+                @if (count($this->availableStatuses()) > 0)
+                    <div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
+                        <flux:heading size="sm" class="mb-4 uppercase tracking-wide text-zinc-500">Kemaskini Status</flux:heading>
+                        <div class="space-y-4">
+                            <div>
+                                <flux:select wire:model="statusBaru" label="Status Baru">
+                                    <flux:select.option value="">— Pilih Status —</flux:select.option>
+                                    @foreach ($this->availableStatuses() as $status)
+                                        <flux:select.option value="{{ $status->value }}">{{ $status->label() }}</flux:select.option>
+                                    @endforeach
+                                </flux:select>
+                                @error('statusBaru')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <flux:textarea
+                                    wire:model="catatanTindakan"
+                                    label="Catatan Tindakan"
+                                    placeholder="Jelaskan tindakan yang diambil..."
+                                    rows="4"
+                                />
+                                @error('catatanTindakan')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <flux:modal.trigger name="confirm-kemaskini">
+                                <flux:button variant="primary" class="w-full">Simpan</flux:button>
+                            </flux:modal.trigger>
+                        </div>
+                    </div>
+                @endif
 
                 {{-- Maklumat Pemohon --}}
                 <div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
@@ -173,4 +219,67 @@
         </div>
 
     </flux:main>
+
+    {{-- Confirmation modal: Kemaskini Status --}}
+    <flux:modal
+        name="confirm-kemaskini"
+        class="min-w-[22rem]"
+        :closable="false"
+        x-data="{ loading: false }"
+        x-on:cancel="loading && $event.preventDefault()"
+        x-on:livewire:commit.window="loading = false"
+    >
+        <div class="relative space-y-6">
+            <div
+                wire:loading
+                wire:target="kemaskiniStatus"
+                class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/80 dark:bg-zinc-900/80"
+            >
+                <flux:icon name="arrow-path" class="size-6 animate-spin text-zinc-500" />
+            </div>
+            <div>
+                <flux:heading size="lg">Sahkan perubahan status?</flux:heading>
+                <flux:subheading>Emel notifikasi akan dihantar kepada pemohon selepas status dikemaskini.</flux:subheading>
+            </div>
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost">Batal</flux:button>
+                </flux:modal.close>
+                <flux:button variant="primary" wire:click="kemaskiniStatus" @click="loading = true">Simpan</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- Confirmation modal: Buka Semula --}}
+    <flux:modal
+        name="confirm-buka-semula"
+        class="min-w-[22rem]"
+        :closable="false"
+        x-data="{ loading: false }"
+        x-on:cancel="loading && $event.preventDefault()"
+        x-on:livewire:commit.window="loading = false"
+    >
+        <div class="relative space-y-6">
+            <div
+                wire:loading
+                wire:target="bukaSemulaAduan"
+                class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/80 dark:bg-zinc-900/80"
+            >
+                <flux:icon name="arrow-path" class="size-6 animate-spin text-zinc-500" />
+            </div>
+            <div>
+                <flux:heading size="lg">Buka semula aduan?</flux:heading>
+                <flux:subheading>Status akan ditukar kembali kepada "Dalam Proses" dan pemohon akan dimaklumkan.</flux:subheading>
+            </div>
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost">Batal</flux:button>
+                </flux:modal.close>
+                <flux:button variant="primary" wire:click="bukaSemulaAduan" @click="loading = true">Buka Semula</flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
 </div>
