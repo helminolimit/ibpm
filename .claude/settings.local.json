@@ -3,7 +3,9 @@
     "allow": [
       "Bash(php artisan *)",
       "Bash(vendor/bin/pint --dirty --format agent)",
-      "mcp__laravel-boost__application-info"
+      "mcp__laravel-boost__application-info",
+      "Bash(xargs grep *)",
+      "Bash(grep *)"
     ]
   },
   "enableAllProjectMcpServers": true,

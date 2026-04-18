@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\RolePengguna;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -30,10 +31,27 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'bahagian' => fake()->randomElement(['Bahagian A', 'Bahagian B', 'Bahagian C']),
+            'jawatan' => fake()->jobTitle(),
+            'no_telefon' => fake()->numerify('01########'),
+            'role' => RolePengguna::Pengguna,
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
         ];
+    }
+
+    public function pentadbir(string $bahagian = 'Unit Infrastruktur'): static
+    {
+        return $this->state([
+            'role' => RolePengguna::Pentadbir,
+            'bahagian' => $bahagian,
+        ]);
+    }
+
+    public function superadmin(): static
+    {
+        return $this->state(['role' => RolePengguna::Superadmin]);
     }
 
     /**
