@@ -11,7 +11,8 @@
       "Bash(grep \"\\\\.php$\")",
       "Bash(grep \"\\\\.blade\\\\.php$\")",
       "Bash(xargs cat *)",
-      "Bash(vendor/bin/pint *)"
+      "Bash(vendor/bin/pint *)",
+      "Bash(xargs grep *)"
     ]
   },
   "enableAllProjectMcpServers": true,
