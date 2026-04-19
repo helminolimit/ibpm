@@ -113,6 +113,16 @@
                             >
                                 Proses
                             </flux:button>
+                        @elseif ($item->status === \App\Enums\StatusPermohonanToner::Diluluskan)
+                            <flux:button
+                                :href="route('m02.admin.hantar', $item->id)"
+                                wire:navigate
+                                variant="outline"
+                                size="sm"
+                                icon="truck"
+                            >
+                                Hantar
+                            </flux:button>
                         @else
                             <flux:button
                                 :href="route('m02.butiran', $item->id)"

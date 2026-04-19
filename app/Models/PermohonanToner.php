@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable([
     'no_tiket',
@@ -54,6 +55,11 @@ class PermohonanToner extends Model
     public function lampiran(): HasMany
     {
         return $this->hasMany(LampiranToner::class);
+    }
+
+    public function penghantaran(): HasOne
+    {
+        return $this->hasOne(PenghantaranToner::class);
     }
 
     public static function janaNoTiket(): string

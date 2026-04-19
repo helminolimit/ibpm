@@ -12,7 +12,10 @@ class TonerDihantar extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public readonly PermohonanToner $permohonan) {}
+    public function __construct(
+        public readonly PermohonanToner $permohonan,
+        public readonly int $kuantitiDihantar = 0,
+    ) {}
 
     /** @return array<int, string> */
     public function via(object $notifiable): array
@@ -29,7 +32,7 @@ class TonerDihantar extends Notification implements ShouldQueue
             ->greeting("Salam {$notifiable->name},")
             ->line('Toner untuk permohonan anda telah berjaya dihantar.')
             ->line("**No. Tiket:** #{$p->no_tiket}")
-            ->line("**Kuantiti Dihantar:** {$p->kuantiti} unit")
+            ->line("**Kuantiti Dihantar:** {$this->kuantitiDihantar} unit")
             ->line('**Tarikh Dihantar:** '.now()->format('d M Y'))
             ->line('Sila hubungi Unit Operasi, Teknikal & Khidmat Pengguna sekiranya terdapat sebarang pertanyaan.')
             ->action('Lihat Butiran', route('m02.butiran', $p->id))
