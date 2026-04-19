@@ -58,4 +58,12 @@ class PermohonanTonerFactory extends Factory
     {
         return $this->state(['status' => StatusPermohonanToner::Ditolak->value]);
     }
+
+    public function pendingStock(): static
+    {
+        return $this->state([
+            'status' => StatusPermohonanToner::PendingStock->value,
+            'kuantiti_diluluskan' => 1,
+        ]);
+    }
 }

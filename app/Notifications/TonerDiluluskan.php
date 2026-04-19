@@ -31,7 +31,8 @@ class TonerDiluluskan extends Notification implements ShouldQueue
             ->greeting("Salam {$notifiable->name},")
             ->line('Permohonan toner anda telah **DILULUSKAN**.')
             ->line("**No. Tiket:** #{$p->no_tiket}")
-            ->line("**Kuantiti Diluluskan:** {$p->kuantiti} unit");
+            ->line("**Kuantiti Diminta:** {$p->kuantiti} unit")
+            ->line("**Kuantiti Diluluskan:** {$p->kuantiti_diluluskan} unit");
 
         if ($this->catatan) {
             $mail->line("**Catatan Pentadbir:** {$this->catatan}");

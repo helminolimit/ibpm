@@ -62,6 +62,14 @@
                         <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Kuantiti Diminta</dt>
                         <dd class="mt-1 text-sm">{{ $this->permohonan->kuantiti }} unit</dd>
                     </div>
+                    @if ($this->permohonan->kuantiti_diluluskan)
+                        <div>
+                            <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Kuantiti Diluluskan</dt>
+                            <dd class="mt-1 text-sm font-semibold text-green-600 dark:text-green-400">
+                                {{ $this->permohonan->kuantiti_diluluskan }} unit
+                            </dd>
+                        </div>
+                    @endif
                     <div>
                         <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Tarikh Diperlukan</dt>
                         <dd class="mt-1 text-sm">

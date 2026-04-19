@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'jenis_toner',
     'no_siri_toner',
     'kuantiti',
+    'kuantiti_diluluskan',
     'lokasi_pencetak',
     'tujuan',
     'tarikh_diperlukan',
