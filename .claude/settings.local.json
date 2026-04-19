@@ -1,6 +1,14 @@
 {
+  "permissions": {
+    "allow": [
+      "mcp__laravel-boost__application-info",
+      "Bash(php artisan *)",
+      "Bash(rm \"/c/laragon/www/ibpm/resources/views/components/m02/⚡borang-permohonan.blade.php\")",
+      "Bash(rmdir \"/c/laragon/www/ibpm/resources/views/components/m02\")"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "laravel-boost"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
