@@ -9,12 +9,17 @@ class StokTonerSeeder extends Seeder
 {
     public function run(): void
     {
-        $jenisToner = ['hitam', 'cyan', 'magenta', 'kuning'];
+        $stok = [
+            ['jenis_toner' => 'hitam', 'model_toner' => 'Umum', 'jenama' => 'Pelbagai', 'kuantiti_minimum' => 5],
+            ['jenis_toner' => 'cyan', 'model_toner' => 'Umum', 'jenama' => 'Pelbagai', 'kuantiti_minimum' => 5],
+            ['jenis_toner' => 'magenta', 'model_toner' => 'Umum', 'jenama' => 'Pelbagai', 'kuantiti_minimum' => 5],
+            ['jenis_toner' => 'kuning', 'model_toner' => 'Umum', 'jenama' => 'Pelbagai', 'kuantiti_minimum' => 5],
+        ];
 
-        foreach ($jenisToner as $jenis) {
+        foreach ($stok as $item) {
             StokToner::firstOrCreate(
-                ['jenis_toner' => $jenis],
-                ['kuantiti_ada' => 0],
+                ['jenis_toner' => $item['jenis_toner'], 'model_toner' => null, 'jenama' => null],
+                array_merge($item, ['kuantiti_ada' => 0]),
             );
         }
     }

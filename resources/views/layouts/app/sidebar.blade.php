@@ -16,6 +16,27 @@
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+
+                @if (in_array(auth()->user()->role ?? '', ['admin', 'superadmin']))
+                    <flux:sidebar.group heading="M02 — Toner" class="grid">
+                        <flux:sidebar.item
+                            icon="clipboard-document-list"
+                            :href="route('m02.admin.senarai')"
+                            :current="request()->routeIs('m02.admin.senarai') || request()->routeIs('m02.admin.proses') || request()->routeIs('m02.admin.hantar')"
+                            wire:navigate
+                        >
+                            Permohonan Toner
+                        </flux:sidebar.item>
+                        <flux:sidebar.item
+                            icon="archive-box"
+                            :href="route('m02.admin.inventori-stok')"
+                            :current="request()->routeIs('m02.admin.inventori-stok')"
+                            wire:navigate
+                        >
+                            Inventori Stok
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @endif
             </flux:sidebar.nav>
 
             <flux:spacer />
