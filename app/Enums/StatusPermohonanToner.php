@@ -8,6 +8,7 @@ enum StatusPermohonanToner: string
     case Disemak = 'disemak';
     case Diluluskan = 'diluluskan';
     case Ditolak = 'ditolak';
+    case Dihantar = 'dihantar';
 
     public function label(): string
     {
@@ -16,6 +17,7 @@ enum StatusPermohonanToner: string
             StatusPermohonanToner::Disemak => 'Dalam Semakan',
             StatusPermohonanToner::Diluluskan => 'Diluluskan',
             StatusPermohonanToner::Ditolak => 'Ditolak',
+            StatusPermohonanToner::Dihantar => 'Toner Dihantar',
         };
     }
 
@@ -26,6 +28,7 @@ enum StatusPermohonanToner: string
             StatusPermohonanToner::Disemak => 'yellow',
             StatusPermohonanToner::Diluluskan => 'green',
             StatusPermohonanToner::Ditolak => 'red',
+            StatusPermohonanToner::Dihantar => 'teal',
         };
     }
 }

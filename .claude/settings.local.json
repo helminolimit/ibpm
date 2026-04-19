@@ -4,7 +4,13 @@
       "mcp__laravel-boost__application-info",
       "Bash(php artisan *)",
       "Bash(rm \"/c/laragon/www/ibpm/resources/views/components/m02/⚡borang-permohonan.blade.php\")",
-      "Bash(rmdir \"/c/laragon/www/ibpm/resources/views/components/m02\")"
+      "Bash(rmdir \"/c/laragon/www/ibpm/resources/views/components/m02\")",
+      "Bash(find C:/laragon/www/ibpm -path \"*\\\\\\\\.claude*\" -type f)",
+      "Bash(git ls-tree *)",
+      "Bash(grep -E \"\\\\.php$\")",
+      "Bash(grep \"\\\\.php$\")",
+      "Bash(grep \"\\\\.blade\\\\.php$\")",
+      "Bash(xargs cat *)"
     ]
   },
   "enableAllProjectMcpServers": true,

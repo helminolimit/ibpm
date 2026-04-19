@@ -1,8 +1,12 @@
 <?php
 
 use App\Livewire\M02\BorangPermohonan;
+use App\Livewire\M02\ButiranPermohonan;
+use App\Livewire\M02\SenaraiPermohonan;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('m02/permohonan-baru', BorangPermohonan::class)->name('m02.permohonan-baru');
+    Route::livewire('m02/permohonan', SenaraiPermohonan::class)->name('m02.senarai');
+    Route::livewire('m02/permohonan/{id}', ButiranPermohonan::class)->name('m02.butiran');
 });
