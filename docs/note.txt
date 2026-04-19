@@ -1,0 +1,3 @@
+UC-M02-03 is fully implemented and all 12 tests pass. The plan you shared describes work that was already completed in
+   the previous session — the notifications (TonerDiluluskan, TonerDihantar, TonerDitolak), the ButiranPermohonan admin
+  methods, and the tests are all in place and green.
