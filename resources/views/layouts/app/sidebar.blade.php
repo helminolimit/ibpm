@@ -16,6 +16,17 @@
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Modul')" class="grid">
+                    <flux:sidebar.item
+                        icon="computer-desktop"
+                        :href="route('m05.loan.index')"
+                        :current="request()->routeIs('m05.loan.*')"
+                        wire:navigate
+                    >
+                        {{ __('Pinjaman ICT') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />

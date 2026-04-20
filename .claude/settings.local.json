@@ -1,6 +1,22 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(find *)",
+      "Bash(xargs grep *)",
+      "mcp__laravel-boost__search-docs",
+      "Bash(php artisan *)",
+      "Bash(del \"resources\\\\views\\\\components\\\\m05\\\\⚡loan-create.blade.php\")",
+      "Bash(vendor/bin/pint --dirty --format agent)",
+      "mcp__laravel-boost__browser-logs",
+      "mcp__laravel-boost__last-error",
+      "Bash(curl -s -b \"laravel_session=test\" http://localhost:8000/pinjaman-ict)",
+      "mcp__laravel-boost__database-schema",
+      "mcp__laravel-boost__database-query",
+      "Bash(xargs wc *)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "laravel-boost"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
