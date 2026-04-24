@@ -5,7 +5,7 @@
         <div class="mb-6">
             <flux:heading size="xl">Aduan ICT</flux:heading>
             <flux:text class="mt-1 text-zinc-500">
-                {{ auth()->user()->isPentadbir() ? 'Unit: '.auth()->user()->bahagian : 'Semua Unit' }}
+                {{ (auth()->user()->isPentadbir() || auth()->user()->isTeknician()) ? 'Unit: '.auth()->user()->unit_bpm : 'Semua Unit' }}
             </flux:text>
         </div>
 

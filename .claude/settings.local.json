@@ -9,7 +9,9 @@
       "Bash(mcp__laravel-boost__database-schema --summary)",
       "Bash(vendor/bin/pint *)",
       "Bash(git -C /c/laragon/www/ibpm log --oneline --all -20)",
-      "mcp__laravel-boost__database-connections"
+      "mcp__laravel-boost__database-connections",
+      "Bash(git config *)",
+      "Bash(git -C C:/laragon/www/ibpm rev-parse --abbrev-ref HEAD)"
     ]
   },
   "enableAllProjectMcpServers": true,

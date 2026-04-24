@@ -40,7 +40,7 @@ class ButiranAduan extends Component
         if ($user->isPentadbir()) {
             $query->whereHas(
                 'kategori',
-                fn ($k) => $k->where('unit_bpm', $user->bahagian)
+                fn ($k) => $k->where('unit_bpm', $user->unit_bpm)
             );
         }
 
@@ -66,7 +66,7 @@ class ButiranAduan extends Component
         ])
             ->when($user->isPentadbir(), fn ($q) => $q->whereHas(
                 'kategori',
-                fn ($k) => $k->where('unit_bpm', $user->bahagian)
+                fn ($k) => $k->where('unit_bpm', $user->unit_bpm)
             ))
             ->when($user->isTeknician(), fn ($q) => $q->where('pentadbir_id', $user->id))
             ->findOrFail($this->aduanId);
@@ -79,7 +79,7 @@ class ButiranAduan extends Component
         $user = Auth::user();
 
         return User::where('role', RolePengguna::Teknician)
-            ->when($user->isPentadbir(), fn ($q) => $q->where('bahagian', $user->bahagian))
+            ->when($user->isPentadbir(), fn ($q) => $q->where('unit_bpm', $user->unit_bpm))
             ->orderBy('name')
             ->get();
     }
@@ -112,7 +112,7 @@ class ButiranAduan extends Component
         $user = Auth::user();
 
         if ($user->isPentadbir()) {
-            abort_unless($aduan->kategori->unit_bpm === $user->bahagian, 403);
+            abort_unless($aduan->kategori->unit_bpm === $user->unit_bpm, 403);
         }
 
         $statusLama = $aduan->status;
@@ -154,7 +154,7 @@ class ButiranAduan extends Component
         abort_unless($aduan->status === StatusAduan::Selesai, 422);
 
         if ($user->isPentadbir()) {
-            abort_unless($aduan->kategori->unit_bpm === $user->bahagian, 403);
+            abort_unless($aduan->kategori->unit_bpm === $user->unit_bpm, 403);
         }
 
         $statusLama = $aduan->status;
@@ -200,7 +200,7 @@ class ButiranAduan extends Component
         $user = Auth::user();
 
         if ($user->isPentadbir()) {
-            abort_unless($aduan->kategori->unit_bpm === $user->bahagian, 403);
+            abort_unless($aduan->kategori->unit_bpm === $user->unit_bpm, 403);
         }
 
         abort_unless(
@@ -211,7 +211,7 @@ class ButiranAduan extends Component
         $teknician = User::findOrFail((int) $this->teknicianId);
 
         if ($user->isPentadbir()) {
-            abort_unless($teknician->bahagian === $user->bahagian, 403);
+            abort_unless($teknician->unit_bpm === $user->unit_bpm, 403);
         }
 
         $statusSemasa = $aduan->status;

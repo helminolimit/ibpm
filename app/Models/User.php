@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'email', 'password', 'bahagian', 'jawatan', 'no_telefon', 'role'])]
+#[Fillable(['name', 'email', 'password', 'bahagian', 'unit_bpm', 'jawatan', 'no_telefon', 'role'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {

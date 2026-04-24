@@ -24,29 +24,20 @@ class AduanIctSeeder extends Seeder
             ['status' => StatusAduan::Baru],
             ['status' => StatusAduan::Baru],
             ['status' => StatusAduan::Baru],
-            [
-                'status' => StatusAduan::DalamProses,
-                'pentadbir_id' => $pentadbirs->random()->id,
-            ],
-            [
-                'status' => StatusAduan::DalamProses,
-                'pentadbir_id' => $pentadbirs->random()->id,
-            ],
+            ['status' => StatusAduan::DalamProses],
+            ['status' => StatusAduan::DalamProses,],
             [
                 'status' => StatusAduan::Selesai,
-                'pentadbir_id' => $pentadbirs->random()->id,
                 'catatan_pentadbir' => 'Aduan telah diselesaikan. Perkakasan telah diganti dan sistem berjalan dengan baik.',
                 'tarikh_selesai' => now()->subDays(3),
             ],
             [
                 'status' => StatusAduan::Selesai,
-                'pentadbir_id' => $pentadbirs->random()->id,
                 'catatan_pentadbir' => 'Masalah perisian telah diperbaiki. Sila hubungi kami jika masalah berulang.',
                 'tarikh_selesai' => now()->subDays(7),
             ],
             [
                 'status' => StatusAduan::Ditolak,
-                'pentadbir_id' => $pentadbirs->random()->id,
                 'catatan_pentadbir' => 'Aduan tidak berkaitan dengan skop BPM. Sila hubungi bahagian berkenaan.',
             ],
             ['status' => StatusAduan::Dibatalkan],

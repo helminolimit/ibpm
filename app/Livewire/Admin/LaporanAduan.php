@@ -146,7 +146,7 @@ class LaporanAduan extends Component
         return AduanIct::query()
             ->when(
                 $user->isPentadbir(),
-                fn ($q) => $q->whereHas('kategori', fn ($k) => $k->where('unit_bpm', $user->bahagian))
+                fn ($q) => $q->whereHas('kategori', fn ($k) => $k->where('unit_bpm', $user->unit_bpm))
             )
             ->when(
                 $user->isSuperadmin() && $this->filterUnit,
@@ -258,7 +258,7 @@ class LaporanAduan extends Component
         $user = Auth::user();
 
         return KategoriAduan::aktif()
-            ->when($user->isPentadbir(), fn ($q) => $q->where('unit_bpm', $user->bahagian))
+            ->when($user->isPentadbir(), fn ($q) => $q->where('unit_bpm', $user->unit_bpm))
             ->orderBy('nama')
             ->get();
     }
@@ -329,7 +329,7 @@ class LaporanAduan extends Component
 
         $user = Auth::user();
         $unitLabel = $user->isPentadbir()
-            ? $user->bahagian
+            ? $user->unit_bpm
             : ($this->filterUnit ?: 'Semua Unit');
 
         $content = Pdf::loadView('exports.laporan-aduan-pdf', [
