@@ -44,6 +44,10 @@ class ButiranAduan extends Component
             );
         }
 
+        if ($user->isTeknician()) {
+            $query->where('pentadbir_id', $user->id);
+        }
+
         abort_unless($query->exists(), 404);
 
         $this->aduanId = $id;
@@ -64,6 +68,7 @@ class ButiranAduan extends Component
                 'kategori',
                 fn ($k) => $k->where('unit_bpm', $user->bahagian)
             ))
+            ->when($user->isTeknician(), fn ($q) => $q->where('pentadbir_id', $user->id))
             ->findOrFail($this->aduanId);
     }
 
@@ -178,6 +183,8 @@ class ButiranAduan extends Component
 
     public function tugaskanTeknician(): void
     {
+        abort_if(Auth::user()->isTeknician(), 403);
+
         $this->validate([
             'teknicianId' => [
                 'required',

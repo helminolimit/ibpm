@@ -155,6 +155,7 @@
                 @endif
 
                 {{-- Penugasan Teknician --}}
+                @unless (auth()->user()->isTeknician())
                 @if (in_array($this->aduan->status, [\App\Enums\StatusAduan::Baru, \App\Enums\StatusAduan::DalamProses]))
                     <div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
                         <flux:heading size="sm" class="mb-4 uppercase tracking-wide text-zinc-500">Penugasan Teknician</flux:heading>
@@ -207,6 +208,7 @@
                         </div>
                     </div>
                 @endif
+                @endunless
 
                 {{-- Maklumat Pemohon --}}
                 <div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">

@@ -16,12 +16,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('permohonan/aduan-ict/{id}', ButiranAduan::class)->name('aduan-ict.show');
 });
 
-Route::middleware(['auth', 'verified', 'role:pentadbir,superadmin'])
+Route::middleware(['auth', 'verified', 'role:pentadbir,superadmin,teknician'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
         Route::livewire('aduan', Admin\SenaraiAduan::class)->name('aduan.index');
         Route::livewire('aduan/{id}', Admin\ButiranAduan::class)->name('aduan.show');
+    });
+
+Route::middleware(['auth', 'verified', 'role:pentadbir,superadmin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
         Route::livewire('laporan', Admin\LaporanAduan::class)->name('laporan.index');
     });
 

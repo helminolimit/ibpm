@@ -22,6 +22,7 @@ beforeEach(function () {
     $this->pengguna = User::factory()->create();
     $this->pentadbir = User::factory()->pentadbir(UNIT_A)->create();
     $this->superadmin = User::factory()->superadmin()->create();
+    $this->teknician = User::factory()->teknician(UNIT_A)->create();
 });
 
 // ─── Access Control ───────────────────────────────────────────────────────────
@@ -46,6 +47,18 @@ it('allows superadmin to access the admin list', function () {
     actingAs($this->superadmin)
         ->get(route('admin.aduan.index'))
         ->assertOk();
+});
+
+it('allows teknician to access the admin aduan list', function () {
+    actingAs($this->teknician)
+        ->get(route('admin.aduan.index'))
+        ->assertOk();
+});
+
+it('blocks teknician from accessing laporan', function () {
+    actingAs($this->teknician)
+        ->get(route('admin.laporan.index'))
+        ->assertForbidden();
 });
 
 // ─── Unit Scoping ─────────────────────────────────────────────────────────────
@@ -218,6 +231,50 @@ it('superadmin can view detail of aduan from any unit', function () {
     actingAs($this->superadmin)
         ->get(route('admin.aduan.show', $aduan->id))
         ->assertOk();
+});
+
+it('teknician only sees aduan assigned to them', function () {
+    $aduanDitugaskan = AduanIct::factory()->create([
+        'user_id' => $this->pengguna->id,
+        'kategori_aduan_id' => $this->kategoriUnitA->id,
+        'pentadbir_id' => $this->teknician->id,
+    ]);
+
+    $aduanLain = AduanIct::factory()->create([
+        'user_id' => $this->pengguna->id,
+        'kategori_aduan_id' => $this->kategoriUnitA->id,
+        'pentadbir_id' => null,
+    ]);
+
+    actingAs($this->teknician);
+
+    Livewire::test(SenaraiAduan::class)
+        ->assertSee($aduanDitugaskan->no_tiket)
+        ->assertDontSee($aduanLain->no_tiket);
+});
+
+it('teknician can view detail of aduan assigned to them', function () {
+    $aduan = AduanIct::factory()->create([
+        'user_id' => $this->pengguna->id,
+        'kategori_aduan_id' => $this->kategoriUnitA->id,
+        'pentadbir_id' => $this->teknician->id,
+    ]);
+
+    actingAs($this->teknician)
+        ->get(route('admin.aduan.show', $aduan->id))
+        ->assertOk();
+});
+
+it('teknician cannot view detail of aduan not assigned to them', function () {
+    $aduan = AduanIct::factory()->create([
+        'user_id' => $this->pengguna->id,
+        'kategori_aduan_id' => $this->kategoriUnitA->id,
+        'pentadbir_id' => null,
+    ]);
+
+    actingAs($this->teknician)
+        ->get(route('admin.aduan.show', $aduan->id))
+        ->assertNotFound();
 });
 
 it('detail page shows submitter info, not admin info', function () {

@@ -74,8 +74,9 @@ class SenaraiAduan extends Component
             ->with(['kategori', 'user'])
             ->when($user->isPentadbir(), fn ($q) => $q->whereHas(
                 'kategori',
-                fn ($k) => $k->where('unit_bpm', $user->bahagian)
-            ));
+                fn ($k) => $k->where('unit_bpm', $user->unit_bpm)
+            ))
+            ->when($user->isTeknician(), fn ($q) => $q->where('pentadbir_id', $user->id));
     }
 
     #[Computed]
