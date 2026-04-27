@@ -19,13 +19,26 @@ class Profile extends Component
 
     public string $email = '';
 
+    public string $bahagian = '';
+
+    public string $unit_bpm = '';
+
+    public string $jawatan = '';
+
+    public string $no_telefon = '';
+
     /**
      * Mount the component.
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
-        $this->email = Auth::user()->email;
+        $user = Auth::user();
+        $this->name = $user->name;
+        $this->email = $user->email;
+        $this->bahagian = $user->bahagian ?? '';
+        $this->unit_bpm = $user->unit_bpm ?? '';
+        $this->jawatan = $user->jawatan ?? '';
+        $this->no_telefon = $user->no_telefon ?? '';
     }
 
     /**
@@ -35,7 +48,13 @@ class Profile extends Component
     {
         $user = Auth::user();
 
-        $validated = $this->validate($this->profileRules($user->id));
+        $validated = $this->validate([
+            ...$this->profileRules($user->id),
+            'bahagian' => ['required', 'string', 'max:255'],
+            'unit_bpm' => ['nullable', 'string', 'max:255'],
+            'jawatan' => ['required', 'string', 'max:255'],
+            'no_telefon' => ['required', 'string', 'max:20'],
+        ]);
 
         $user->fill($validated);
 

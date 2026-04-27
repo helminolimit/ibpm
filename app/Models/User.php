@@ -68,6 +68,13 @@ class User extends Authenticatable
         return $this->status === StatusPengguna::Pending;
     }
 
+    public function isProfileComplete(): bool
+    {
+        return filled($this->bahagian)
+            && filled($this->jawatan)
+            && filled($this->no_telefon);
+    }
+
     /**
      * Get the user's initials
      */
