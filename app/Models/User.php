@@ -4,21 +4,23 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\RolePengguna;
+use App\Enums\StatusPengguna;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'email', 'password', 'bahagian', 'unit_bpm', 'jawatan', 'no_telefon', 'role'])]
+#[Fillable(['name', 'email', 'password', 'bahagian', 'unit_bpm', 'jawatan', 'no_telefon', 'role', 'status', 'last_login_at'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
 
     /**
      * Get the attributes that should be cast.
@@ -31,6 +33,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => RolePengguna::class,
+            'status' => StatusPengguna::class,
+            'last_login_at' => 'datetime',
         ];
     }
 
@@ -52,6 +56,16 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->isPentadbir() || $this->isSuperadmin();
+    }
+
+    public function isAktif(): bool
+    {
+        return $this->status === StatusPengguna::Aktif;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === StatusPengguna::Pending;
     }
 
     /**

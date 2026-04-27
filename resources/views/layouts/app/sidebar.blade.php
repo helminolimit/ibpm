@@ -80,6 +80,35 @@
                         </flux:sidebar.item>
                     </flux:sidebar.group>
                 @endif
+
+                @if (auth()->user()?->isSuperadmin())
+                    <flux:sidebar.group :heading="__('Pengurusan Sistem')" class="grid">
+                        <flux:sidebar.item
+                            icon="users"
+                            :href="route('superadmin.pengguna.index')"
+                            :current="request()->routeIs('superadmin.pengguna.*')"
+                            wire:navigate
+                        >
+                            {{ __('Pengguna') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item
+                            icon="key"
+                            :href="route('superadmin.peranan-akses.index')"
+                            :current="request()->routeIs('superadmin.peranan-akses.*')"
+                            wire:navigate
+                        >
+                            {{ __('Peranan & Akses') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item
+                            icon="clipboard-document-list"
+                            :href="route('superadmin.log-audit.index')"
+                            :current="request()->routeIs('superadmin.log-audit.*')"
+                            wire:navigate
+                        >
+                            {{ __('Log Audit') }}
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @endif
             </flux:sidebar.nav>
 
             <flux:spacer />
