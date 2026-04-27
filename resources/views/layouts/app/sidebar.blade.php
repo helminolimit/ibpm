@@ -171,12 +171,11 @@
             </flux:dropdown>
         </flux:header>
 
-        <div class="flex min-h-svh flex-col">
-            <div class="flex-1">
-                {{ $slot }}
-            </div>
+        {{ $slot }}
+
+        <flux:footer class="!p-0">
             <x-motac-footer />
-        </div>
+        </flux:footer>
 
         @persist('toast')
             <flux:toast.group>
