@@ -16,6 +16,70 @@
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Permohonan')" class="grid">
+                    <flux:sidebar.item icon="exclamation-circle" :href="route('aduan-ict.create')" :current="request()->routeIs('aduan-ict.create')" wire:navigate>
+                        {{ __('Aduan ICT') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="queue-list" :href="route('senarai-saya')" :current="request()->routeIs('senarai-saya') || request()->routeIs('aduan-ict.show')" wire:navigate>
+                        {{ __('Senarai Saya') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                @if (auth()->user()?->isAdmin())
+                    @php
+                        $jumlahAduanBaru = \App\Models\AduanIct::query()
+                            ->when(auth()->user()->isPentadbir(), fn ($q) =>
+                                $q->whereHas('kategori', fn ($k) => $k->where('unit_bpm', auth()->user()->bahagian))
+                            )
+                            ->where('status', \App\Enums\StatusAduan::Baru)
+                            ->count();
+                    @endphp
+                    <flux:sidebar.group :heading="__('Pentadbiran')" class="grid">
+                        <flux:sidebar.item
+                            icon="shield-check"
+                            :href="route('admin.aduan.index')"
+                            :current="request()->routeIs('admin.aduan.*')"
+                            wire:navigate
+                        >
+                            <div class="flex w-full items-center justify-between">
+                                <span>{{ __('Aduan ICT') }}</span>
+                                @if ($jumlahAduanBaru > 0)
+                                    <flux:badge color="red" size="sm">{{ $jumlahAduanBaru }}</flux:badge>
+                                @endif
+                            </div>
+                        </flux:sidebar.item>
+                        <flux:sidebar.item
+                            icon="chart-bar"
+                            :href="route('admin.laporan.index')"
+                            :current="request()->routeIs('admin.laporan.*')"
+                            wire:navigate
+                        >
+                            {{ __('Jana Laporan') }}
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @elseif (auth()->user()?->isTeknician())
+                    @php
+                        $jumlahAduanSaya = \App\Models\AduanIct::where('pentadbir_id', auth()->id())
+                            ->whereIn('status', [\App\Enums\StatusAduan::Baru, \App\Enums\StatusAduan::DalamProses])
+                            ->count();
+                    @endphp
+                    <flux:sidebar.group :heading="__('Tugasan')" class="grid">
+                        <flux:sidebar.item
+                            icon="shield-check"
+                            :href="route('admin.aduan.index')"
+                            :current="request()->routeIs('admin.aduan.*')"
+                            wire:navigate
+                        >
+                            <div class="flex w-full items-center justify-between">
+                                <span>{{ __('Aduan Saya') }}</span>
+                                @if ($jumlahAduanSaya > 0)
+                                    <flux:badge color="red" size="sm">{{ $jumlahAduanSaya }}</flux:badge>
+                                @endif
+                            </div>
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @endif
             </flux:sidebar.nav>
 
             <flux:spacer />
