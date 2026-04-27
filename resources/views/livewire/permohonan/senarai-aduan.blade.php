@@ -1,5 +1,10 @@
 <div>
     <flux:main container>
+        <x-breadcrumbs :items="[
+            ['label' => 'iBPM', 'url' => route('dashboard')],
+            ['label' => 'Permohonan'],
+            ['label' => 'Aduan Saya'],
+        ]" />
         <div class="mb-6 flex items-center justify-between">
             <div>
                 <flux:heading size="xl">Senarai Aduan Saya</flux:heading>

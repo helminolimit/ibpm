@@ -1,4 +1,9 @@
 <section class="w-full">
+    <x-breadcrumbs :items="[
+        ['label' => 'iBPM', 'url' => route('dashboard')],
+        ['label' => 'Tetapan'],
+        ['label' => 'Profil'],
+    ]" />
     @include('partials.settings-heading')
 
     <flux:heading class="sr-only">{{ __('Profile settings') }}</flux:heading>

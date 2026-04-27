@@ -1,5 +1,10 @@
 <div>
     <flux:main container>
+        <x-breadcrumbs :items="[
+            ['label' => 'iBPM', 'url' => route('dashboard')],
+            ['label' => 'Permohonan'],
+            ['label' => 'Aduan ICT'],
+        ]" />
 
         {{-- Step 1: Borang Aduan --}}
         @if ($step === 1)
