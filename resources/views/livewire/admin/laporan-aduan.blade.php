@@ -1,5 +1,9 @@
 <div>
     <flux:main container>
+        <x-breadcrumbs :items="[
+            ['label' => 'iBPM', 'url' => route('dashboard')],
+            ['label' => 'Laporan'],
+        ]" />
 
         {{-- Header --}}
         <div class="mb-6">

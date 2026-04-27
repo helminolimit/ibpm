@@ -4,6 +4,32 @@
             <flux:navlist.item :href="route('profile.edit')" wire:navigate>{{ __('Profile') }}</flux:navlist.item>
             <flux:navlist.item :href="route('security.edit')" wire:navigate>{{ __('Security') }}</flux:navlist.item>
             <flux:navlist.item :href="route('appearance.edit')" wire:navigate>{{ __('Appearance') }}</flux:navlist.item>
+
+            @if (auth()->user()?->isSuperadmin())
+                <flux:navlist.group heading="{{ __('Pengurusan Sistem') }}" expandable>
+                    <flux:navlist.item
+                        :href="route('superadmin.pengguna.index')"
+                        :current="request()->routeIs('superadmin.pengguna.*')"
+                        wire:navigate
+                    >
+                        {{ __('Pengguna') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item
+                        :href="route('superadmin.peranan-akses.index')"
+                        :current="request()->routeIs('superadmin.peranan-akses.*')"
+                        wire:navigate
+                    >
+                        {{ __('Peranan & Akses') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item
+                        :href="route('superadmin.log-audit.index')"
+                        :current="request()->routeIs('superadmin.log-audit.*')"
+                        wire:navigate
+                    >
+                        {{ __('Log Audit') }}
+                    </flux:navlist.item>
+                </flux:navlist.group>
+            @endif
         </flux:navlist>
     </div>
 

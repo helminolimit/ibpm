@@ -80,19 +80,38 @@
                         </flux:sidebar.item>
                     </flux:sidebar.group>
                 @endif
+
+                @if (auth()->user()?->isSuperadmin())
+                    <flux:sidebar.group :heading="__('Pengurusan Sistem')" class="grid">
+                        <flux:sidebar.item
+                            icon="users"
+                            :href="route('superadmin.pengguna.index')"
+                            :current="request()->routeIs('superadmin.pengguna.*')"
+                            wire:navigate
+                        >
+                            {{ __('Pengguna') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item
+                            icon="key"
+                            :href="route('superadmin.peranan-akses.index')"
+                            :current="request()->routeIs('superadmin.peranan-akses.*')"
+                            wire:navigate
+                        >
+                            {{ __('Peranan & Akses') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item
+                            icon="clipboard-document-list"
+                            :href="route('superadmin.log-audit.index')"
+                            :current="request()->routeIs('superadmin.log-audit.*')"
+                            wire:navigate
+                        >
+                            {{ __('Log Audit') }}
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @endif
             </flux:sidebar.nav>
 
             <flux:spacer />
-
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>
@@ -153,6 +172,10 @@
         </flux:header>
 
         {{ $slot }}
+
+        <flux:footer class="!p-0">
+            <x-motac-footer />
+        </flux:footer>
 
         @persist('toast')
             <flux:toast.group>
