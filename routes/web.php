@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\PenatamatanAdminController;
+use App\Http\Controllers\KelulusanPeringkat1Controller;
+use App\Http\Controllers\PenatamatanAkaunController;
 use App\Livewire\Admin;
 use App\Livewire\KemaskiniProfil;
 use App\Livewire\Permohonan\AduanIctForm;
@@ -36,7 +39,25 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
     Route::livewire('senarai-saya', SenaraiAduan::class)->name('senarai-saya');
     Route::livewire('permohonan/aduan-ict/{id}', ButiranAduan::class)->name('aduan-ict.show');
     Route::view('permohonan/toner', 'pages.coming-soon')->name('toner.create');
+
+    // M03 — Penamatan Akaun (Pemohon)
+    Route::prefix('penamatan-akaun')->name('penamatan-akaun.')->group(function () {
+        Route::get('/', [PenatamatanAkaunController::class, 'index'])->name('index');
+        Route::get('/baru', [PenatamatanAkaunController::class, 'create'])->name('create');
+        Route::post('/', [PenatamatanAkaunController::class, 'store'])->name('store');
+        Route::get('/{id}', [PenatamatanAkaunController::class, 'show'])->name('show');
+    });
 });
+
+// M03 — Kelulusan Peringkat 1 (Gred 41+)
+Route::middleware(['auth', 'verified', 'profile.complete', 'role:pelulus_1,superadmin'])
+    ->prefix('kelulusan/penamatan')
+    ->name('kelulusan.penamatan.')
+    ->group(function () {
+        Route::get('/', [KelulusanPeringkat1Controller::class, 'index'])->name('index');
+        Route::patch('/{id}/lulus', [KelulusanPeringkat1Controller::class, 'lulus'])->name('lulus');
+        Route::patch('/{id}/tolak', [KelulusanPeringkat1Controller::class, 'tolak'])->name('tolak');
+    });
 
 Route::middleware(['auth', 'verified', 'profile.complete', 'role:pentadbir,superadmin,teknician'])
     ->prefix('admin')
@@ -44,6 +65,17 @@ Route::middleware(['auth', 'verified', 'profile.complete', 'role:pentadbir,super
     ->group(function () {
         Route::livewire('aduan', Admin\SenaraiAduan::class)->name('aduan.index');
         Route::livewire('aduan/{id}', Admin\ButiranAduan::class)->name('aduan.show');
+    });
+
+// M03 — Pentadbir ICT
+Route::middleware(['auth', 'verified', 'profile.complete', 'role:pentadbir,superadmin'])
+    ->prefix('admin/penamatan-akaun')
+    ->name('admin.penamatan.')
+    ->group(function () {
+        Route::get('/', [PenatamatanAdminController::class, 'index'])->name('index');
+        Route::patch('/{id}/lulus', [PenatamatanAdminController::class, 'lulus'])->name('lulus');
+        Route::patch('/{id}/selesai', [PenatamatanAdminController::class, 'selesai'])->name('selesai');
+        Route::get('/{id}/audit', [PenatamatanAdminController::class, 'audit'])->name('audit');
     });
 
 Route::middleware(['auth', 'verified', 'profile.complete', 'role:pentadbir,superadmin'])

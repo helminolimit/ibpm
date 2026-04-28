@@ -24,7 +24,36 @@
                     <flux:sidebar.item icon="queue-list" :href="route('senarai-saya')" :current="request()->routeIs('senarai-saya') || request()->routeIs('aduan-ict.show')" wire:navigate>
                         {{ __('Senarai Saya') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item
+                        icon="computer-desktop"
+                        :href="route('penamatan-akaun.index')"
+                        :current="request()->routeIs('penamatan-akaun.*')"
+                        wire:navigate
+                    >
+                        {{ __('Penamatan Akaun') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
+
+                @if (auth()->user()?->isPelulus1())
+                    @php
+                        $jumlahMenungguKel1 = \App\Models\PermohonanPenamatan::where('status', 'MENUNGGU_KEL_1')->count();
+                    @endphp
+                    <flux:sidebar.group :heading="__('Kelulusan')" class="grid">
+                        <flux:sidebar.item
+                            icon="check-circle"
+                            :href="route('kelulusan.penamatan.index')"
+                            :current="request()->routeIs('kelulusan.penamatan.*')"
+                            wire:navigate
+                        >
+                            <div class="flex w-full items-center justify-between">
+                                <span>{{ __('Penamatan Akaun') }}</span>
+                                @if ($jumlahMenungguKel1 > 0)
+                                    <flux:badge color="yellow" size="sm">{{ $jumlahMenungguKel1 }}</flux:badge>
+                                @endif
+                            </div>
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @endif
 
                 @if (auth()->user()?->isAdmin())
                     @php
@@ -34,6 +63,7 @@
                             )
                             ->where('status', \App\Enums\StatusAduan::Baru)
                             ->count();
+                        $jumlahMenungguKel2 = \App\Models\PermohonanPenamatan::where('status', 'MENUNGGU_KEL_2')->count();
                     @endphp
                     <flux:sidebar.group :heading="__('Pentadbiran')" class="grid">
                         <flux:sidebar.item
@@ -46,6 +76,19 @@
                                 <span>{{ __('Aduan ICT') }}</span>
                                 @if ($jumlahAduanBaru > 0)
                                     <flux:badge color="red" size="sm">{{ $jumlahAduanBaru }}</flux:badge>
+                                @endif
+                            </div>
+                        </flux:sidebar.item>
+                        <flux:sidebar.item
+                            icon="computer-desktop"
+                            :href="route('admin.penamatan.index')"
+                            :current="request()->routeIs('admin.penamatan.*')"
+                            wire:navigate
+                        >
+                            <div class="flex w-full items-center justify-between">
+                                <span>{{ __('Penamatan Akaun') }}</span>
+                                @if ($jumlahMenungguKel2 > 0)
+                                    <flux:badge color="orange" size="sm">{{ $jumlahMenungguKel2 }}</flux:badge>
                                 @endif
                             </div>
                         </flux:sidebar.item>

@@ -9,6 +9,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -36,6 +37,11 @@ class User extends Authenticatable
             'status' => StatusPengguna::class,
             'last_login_at' => 'datetime',
         ];
+    }
+
+    public function isPelulus1(): bool
+    {
+        return $this->role === RolePengguna::Pelulus1;
     }
 
     public function isPentadbir(): bool
@@ -73,6 +79,21 @@ class User extends Authenticatable
         return filled($this->bahagian)
             && filled($this->jawatan)
             && filled($this->no_telefon);
+    }
+
+    public function permohonanPenamatan(): HasMany
+    {
+        return $this->hasMany(PermohonanPenamatan::class, 'pemohon_id');
+    }
+
+    public function penatamatanSasaran(): HasMany
+    {
+        return $this->hasMany(PermohonanPenamatan::class, 'pengguna_sasaran_id');
+    }
+
+    public function kelulusanPenamatan(): HasMany
+    {
+        return $this->hasMany(KelulusanPenamatan::class, 'pelulus_id');
     }
 
     /**
