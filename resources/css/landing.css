@@ -1,0 +1,98 @@
+/* resources/css/landing.css
+   Append to resources/css/app.css OR @import this file.
+   Defines BPM theme tokens, fonts, and the songket-stripe motif used by the
+   landing hero. Uses Tailwind v4 @theme block convention. */
+
+@theme {
+    /* BPM brand */
+    --color-bpm:      227 6 19;     /* #E30613 */
+    --color-bpm-dark: 184 5 16;
+    --color-bpm-50:   254 235 237;
+
+    --font-sans:    'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Newsreader', ui-serif, Georgia, serif;
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+}
+
+:root {
+    --bpm:      227 6 19;
+    --bpm-dark: 184 5 16;
+    --bpm-50:   254 235 237;
+}
+
+html, body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv11";
+}
+
+.font-display { font-family: var(--font-display); font-variation-settings: "opsz" 32; }
+.font-mono    { font-family: var(--font-mono); }
+
+/* Diagonal stripe motif inspired by traditional songket */
+.songket-stripe {
+    background-image: repeating-linear-gradient(
+        135deg,
+        rgb(var(--bpm) / 0.07) 0 2px,
+        transparent 2px 16px,
+        rgb(var(--bpm) / 0.04) 16px 17px,
+        transparent 17px 28px
+    );
+}
+
+.btn-primary {
+    background: rgb(var(--bpm));
+    color: white;
+    transition: all 160ms ease;
+}
+.btn-primary:hover {
+    background: rgb(var(--bpm-dark));
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px -6px rgb(var(--bpm) / 0.5);
+}
+
+.btn-ghost { color: rgb(24 24 27); }
+.btn-ghost:hover { background: rgb(244 244 245); }
+
+.link-underline {
+    background-image: linear-gradient(rgb(var(--bpm)), rgb(var(--bpm)));
+    background-size: 0 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 220ms ease;
+}
+.link-underline:hover { background-size: 100% 1px; }
+
+.ring-focus:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(var(--bpm) / 0.2);
+    border-color: rgb(var(--bpm));
+}
+
+.fade-in { animation: ibpm-fade 600ms cubic-bezier(.2,.8,.2,1) both; }
+@keyframes ibpm-fade {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Tartan-inspired soft pattern used on Variant B hero */
+.bpm-pattern {
+    background-color: rgb(250 250 250);
+    background-image:
+        linear-gradient(0deg,  transparent 49.5%, rgb(var(--bpm) / 0.06) 49.5%, rgb(var(--bpm) / 0.06) 50.5%, transparent 50.5%),
+        linear-gradient(90deg, transparent 49.5%, rgb(var(--bpm) / 0.06) 49.5%, rgb(var(--bpm) / 0.06) 50.5%, transparent 50.5%),
+        radial-gradient(circle at 50% 50%, rgb(var(--bpm) / 0.04) 0, transparent 70%);
+    background-size: 32px 32px, 32px 32px, 100% 100%;
+}
+
+/* Announcement marquee */
+.marquee-track {
+    animation: ibpm-marquee 38s linear infinite;
+}
+@keyframes ibpm-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
+}

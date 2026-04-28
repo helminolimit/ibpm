@@ -8,7 +8,22 @@ use App\Livewire\Permohonan\SenaraiAduan;
 use App\Livewire\Superadmin;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+Route::view('/', 'landing')->name('home');
+
+Route::view('/panduan', 'pages.panduan')->name('panduan');
+Route::view('/hubungi', 'pages.hubungi')->name('hubungi');
+Route::view('/faq', 'pages.faq')->name('faq');
+Route::view('/privasi', 'pages.privasi')->name('privasi');
+Route::view('/penafian', 'pages.penafian')->name('penafian');
+Route::view('/dasar-ict', 'pages.dasar-ict')->name('dasar-ict');
+
+Route::get('/locale/{locale}', function (string $locale) {
+    if (in_array($locale, ['ms', 'en'], true)) {
+        session(['locale' => $locale]);
+    }
+
+    return back();
+})->name('locale.switch');
 
 Route::middleware(['auth'])->group(function () {
     Route::livewire('kemaskini-profil', KemaskiniProfil::class)->name('profile.complete');
@@ -20,6 +35,7 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
     Route::livewire('permohonan/aduan-ict', AduanIctForm::class)->name('aduan-ict.create');
     Route::livewire('senarai-saya', SenaraiAduan::class)->name('senarai-saya');
     Route::livewire('permohonan/aduan-ict/{id}', ButiranAduan::class)->name('aduan-ict.show');
+    Route::view('permohonan/toner', 'pages.coming-soon')->name('toner.create');
 });
 
 Route::middleware(['auth', 'verified', 'profile.complete', 'role:pentadbir,superadmin,teknician'])

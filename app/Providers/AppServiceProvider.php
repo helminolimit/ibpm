@@ -12,10 +12,13 @@ use App\Listeners\HantarEmailAduanSelesai;
 use App\Listeners\HantarEmailNotifikasiAdmin;
 use App\Listeners\HantarEmailPengesahan;
 use App\Listeners\HantarEmailStatusKemaskini;
+use App\Models\AduanIct;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -36,6 +39,25 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->registerEventListeners();
+        $this->registerViewComposers();
+    }
+
+    protected function registerViewComposers(): void
+    {
+        View::composer('landing', function ($view) {
+            $view->with([
+                'stats' => Cache::remember(
+                    'landing.stats',
+                    now()->addMinutes(15),
+                    fn () => [
+                        'aduan_resolved' => number_format(AduanIct::where('status', 'SELESAI')->count()),
+                        'sla_pct' => '98',
+                        'active_users' => '1.4k',
+                    ]
+                ),
+                'announcements' => [],
+            ]);
+        });
     }
 
     protected function registerEventListeners(): void
