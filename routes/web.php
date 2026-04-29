@@ -40,10 +40,11 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
     Route::livewire('permohonan/aduan-ict/{id}', ButiranAduan::class)->name('aduan-ict.show');
     Route::view('permohonan/toner', 'pages.coming-soon')->name('toner.create');
 
-    // M04 — Kemaskini Portal (Pemohon)
+    // M04 — Kemaskini Portal (Pengguna)
     Route::prefix('kemaskini-portal')->name('kemaskini-portal.')->group(function () {
         Route::get('/', [\App\Http\Controllers\PermohonanPortalController::class, 'index'])->name('index');
         Route::get('/baru', [\App\Http\Controllers\PermohonanPortalController::class, 'create'])->name('create');
+        Route::get('/sejarah', \App\Livewire\M04\SejarahPermohonan::class)->name('sejarah')->middleware('role:pengguna');
         Route::get('/{id}', [\App\Http\Controllers\PermohonanPortalController::class, 'show'])->name('show');
     });
 

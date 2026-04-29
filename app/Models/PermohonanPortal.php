@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Enums\StatusPermohonanPortal;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class PermohonanPortal extends Model
 {
@@ -38,6 +40,38 @@ class PermohonanPortal extends Model
         $terakhir = static::whereYear('created_at', $tahun)->count() + 1;
 
         return sprintf('#ICT-%d-%03d', $tahun, $terakhir);
+    }
+
+    /**
+     * Scope a query to only include applications belonging to the authenticated user.
+     *
+     * This scope enforces security at the database query level by filtering records
+     * where pemohon_id matches the authenticated user's ID.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMilikPemohon(Builder $query): Builder
+    {
+        return $query->where('pemohon_id', Auth::id());
+    }
+
+    /**
+     * Scope a query to filter applications by ticket number or page URL.
+     *
+     * This scope enables search functionality by filtering records where either
+     * the ticket number OR the page URL contains the search query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $carian
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCarian(Builder $query, string $carian): Builder
+    {
+        return $query->where(function ($q) use ($carian) {
+            $q->where('no_tiket', 'like', "%{$carian}%")
+              ->orWhere('url_halaman', 'like', "%{$carian}%");
+        });
     }
 
     public function pemohon(): BelongsTo
