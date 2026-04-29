@@ -11,7 +11,11 @@
       "Bash(git -C /c/laragon/www/ibpm log --oneline --all -20)",
       "mcp__laravel-boost__database-connections",
       "Bash(git config *)",
-      "Bash(git -C C:/laragon/www/ibpm rev-parse --abbrev-ref HEAD)"
+      "Bash(git -C C:/laragon/www/ibpm rev-parse --abbrev-ref HEAD)",
+      "Bash(mkdir -p \"C:/laragon/www/ibpm/app/Livewire/M04\")",
+      "Bash(mkdir -p \"C:/laragon/www/ibpm/resources/views/livewire/m04\")",
+      "Bash(mkdir -p \"C:/laragon/www/ibpm/resources/views/m04\")",
+      "Bash(mkdir -p \"C:/laragon/www/ibpm/resources/views/emails\")"
     ]
   },
   "enableAllProjectMcpServers": true,

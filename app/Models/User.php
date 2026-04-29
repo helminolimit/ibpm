@@ -86,6 +86,11 @@ class User extends Authenticatable
         return $this->hasMany(PermohonanPenamatan::class, 'pemohon_id');
     }
 
+    public function permohonanPortal(): HasMany
+    {
+        return $this->hasMany(PermohonanPortal::class, 'pemohon_id');
+    }
+
     public function penatamatanSasaran(): HasMany
     {
         return $this->hasMany(PermohonanPenamatan::class, 'pengguna_sasaran_id');

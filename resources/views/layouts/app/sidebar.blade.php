@@ -32,6 +32,14 @@
                     >
                         {{ __('Penamatan Akaun') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item
+                        icon="globe-alt"
+                        :href="route('kemaskini-portal.index')"
+                        :current="request()->routeIs('kemaskini-portal.*')"
+                        wire:navigate
+                    >
+                        {{ __('Kemaskini Portal') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
 
                 @if (auth()->user()?->isPelulus1())
