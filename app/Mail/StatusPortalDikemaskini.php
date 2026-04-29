@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PermohonanPortalDiterima extends Mailable implements ShouldQueue
+class StatusPortalDikemaskini extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -19,14 +19,14 @@ class PermohonanPortalDiterima extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Permohonan Kemaskini Portal Diterima — IBPM MOTAC',
+            subject: '[ICTServe] Status Permohonan '.$this->permohonan->no_tiket.' Dikemaskini — IBPM MOTAC',
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.permohonan_portal_diterima',
+            view: 'emails.status_portal_dikemaskini',
         );
     }
 }

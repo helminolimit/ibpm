@@ -78,12 +78,21 @@ class BorangPermohonan extends Component
             'ip_address' => request()->ip(),
         ]);
 
-        $emailPentadbir = User::where('role', RolePengguna::Pentadbir)
+        // Hantar email ke Pentadbir (queue)
+        $pentadbir = User::where('role', RolePengguna::Pentadbir)
             ->where('bahagian', 'Unit Aplikasi Teras dan Multimedia')
-            ->value('email');
+            ->first();
 
-        if ($emailPentadbir) {
-            Mail::to($emailPentadbir)->send(new PermohonanPortalDiterima($permohonan));
+        if ($pentadbir) {
+            Mail::to($pentadbir->email)->queue(new PermohonanPortalDiterima($permohonan));
+
+            // Simpan notifikasi
+            \App\Models\NotifikasiPortal::create([
+                'pengguna_id' => $pentadbir->id,
+                'permohonan_portal_id' => $permohonan->id,
+                'jenis' => 'permohonan_baru',
+                'mesej' => 'Permohonan kemaskini portal baharu '.$permohonan->no_tiket.' telah diterima.',
+            ]);
         }
 
         $this->noTiket = $permohonan->no_tiket;

@@ -40,6 +40,12 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->registerEventListeners();
         $this->registerViewComposers();
+        $this->registerObservers();
+    }
+
+    protected function registerObservers(): void
+    {
+        \App\Models\PermohonanPortal::observe(\App\Observers\PermohonanPortalObserver::class);
     }
 
     protected function registerViewComposers(): void
