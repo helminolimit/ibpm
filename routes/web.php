@@ -103,6 +103,7 @@ Route::middleware(['auth', 'verified', 'profile.complete', 'role:superadmin'])
         Route::livewire('pengguna', Superadmin\SenaraiPengguna::class)->name('pengguna.index');
         Route::livewire('peranan-akses', Superadmin\PerananAkses::class)->name('peranan-akses.index');
         Route::livewire('log-audit', Superadmin\LogAudit::class)->name('log-audit.index');
+        Route::livewire('laporan-portal', Superadmin\LaporanPortal::class)->name('laporan-portal.index');
     });
 
 // M04 — Panel Pentadbir Kemaskini Portal

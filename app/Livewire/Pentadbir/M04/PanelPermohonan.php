@@ -2,11 +2,19 @@
 
 namespace App\Livewire\Pentadbir\M04;
 
+use App\Enums\RolePengguna;
 use App\Enums\StatusPermohonanPortal;
+use App\Mail\TugasanPortalBaru;
+use App\Models\LogAuditPortal;
+use App\Models\NotifikasiPortal;
 use App\Models\PermohonanPortal;
+use App\Models\TugasanPortal;
+use App\Models\User;
 use Flux\Flux;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Attributes\Computed;
@@ -40,6 +48,13 @@ class PanelPermohonan extends Component
     public ?string $permohonanIdTerpilih = null;
 
     public string $statusBaru = '';
+
+    // Tugasan properties
+    public ?string $permohonanIdTugasan = null;
+
+    public string $teknisianId = '';
+
+    public string $notaTugasan = '';
 
     public function sort(string $column): void
     {
@@ -124,6 +139,69 @@ class PanelPermohonan extends Component
         return collect(StatusPermohonanPortal::cases())
             ->mapWithKeys(fn ($s) => [$s->value => $s->label()])
             ->toArray();
+    }
+
+    public function bukaTugasan(string $id): void
+    {
+        $this->permohonanIdTugasan = $id;
+        $this->teknisianId = '';
+        $this->notaTugasan = '';
+        $this->resetErrorBag();
+        Flux::modal('tugaskan-pembangun')->show();
+    }
+
+    public function tugaskanPembangun(): void
+    {
+        $this->validate([
+            'permohonanIdTugasan' => ['required', 'exists:permohonan_portals,id'],
+            'teknisianId' => ['required', 'exists:users,id'],
+            'notaTugasan' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $permohonan = PermohonanPortal::findOrFail($this->permohonanIdTugasan);
+        $teknisian = User::findOrFail($this->teknisianId);
+
+        $tugasan = TugasanPortal::create([
+            'permohonan_portal_id' => $permohonan->id,
+            'teknisian_id' => $teknisian->id,
+            'ditugaskan_oleh' => Auth::id(),
+            'nota_tugasan' => $this->notaTugasan ?: null,
+            'status_tugasan' => 'baharu',
+        ]);
+
+        Mail::to($teknisian->email)->queue(new TugasanPortalBaru($tugasan));
+
+        NotifikasiPortal::create([
+            'pengguna_id' => $teknisian->id,
+            'permohonan_portal_id' => $permohonan->id,
+            'jenis' => 'tugasan_baru',
+            'mesej' => "Anda ditugaskan untuk permohonan {$permohonan->no_tiket}.",
+        ]);
+
+        LogAuditPortal::create([
+            'permohonan_portal_id' => $permohonan->id,
+            'pengguna_id' => Auth::id(),
+            'tindakan' => 'tugasan_dibuat',
+            'butiran' => ['teknisian' => $teknisian->name, 'nota' => $this->notaTugasan],
+            'modul' => 'M04',
+            'ip_address' => request()->ip(),
+        ]);
+
+        $this->reset('permohonanIdTugasan', 'teknisianId', 'notaTugasan');
+        Flux::modal('tugaskan-pembangun')->close();
+        Flux::toast(text: 'Tugasan berjaya ditetapkan.', variant: 'success');
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    #[Computed]
+    public function senaraiTeknisian(): Collection
+    {
+        return User::where('role', RolePengguna::Teknician)
+            ->orWhere('role', RolePengguna::Pentadbir)
+            ->orderBy('name')
+            ->get(['id', 'name', 'role']);
     }
 
     #[Computed]

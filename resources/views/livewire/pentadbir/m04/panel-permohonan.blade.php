@@ -99,12 +99,22 @@
                             </flux:badge>
                         </flux:table.cell>
                         <flux:table.cell>
-                            <flux:button
-                                size="sm"
-                                variant="ghost"
-                                icon="pencil-square"
-                                wire:click="bukaPilihStatus('{{ $permohonan->id }}')"
-                            />
+                            <div class="flex gap-1">
+                                <flux:button
+                                    size="sm"
+                                    variant="ghost"
+                                    icon="pencil-square"
+                                    wire:click="bukaPilihStatus('{{ $permohonan->id }}')"
+                                    title="Kemaskini Status"
+                                />
+                                <flux:button
+                                    size="sm"
+                                    variant="ghost"
+                                    icon="user-plus"
+                                    wire:click="bukaTugasan('{{ $permohonan->id }}')"
+                                    title="Tugaskan Pembangun"
+                                />
+                            </div>
                         </flux:table.cell>
                     </flux:table.row>
                 @empty
@@ -154,6 +164,51 @@
                 </flux:modal.close>
                 <flux:button variant="primary" wire:click="kemaskiniStatus" @click="loading = true">
                     Kemaskini
+                </flux:button>
+            </div>
+        </div>
+    </flux:modal>
+
+    {{-- Modal tugaskan pembangun --}}
+    <flux:modal
+        name="tugaskan-pembangun"
+        class="min-w-[22rem]"
+        :closable="false"
+        x-data="{ loading: false }"
+        x-on:cancel="loading && $event.preventDefault()"
+        x-on:livewire:commit.window="loading = false"
+    >
+        <div class="relative space-y-6">
+            <div
+                wire:loading
+                wire:target="tugaskanPembangun"
+                class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/80 dark:bg-zinc-900/80"
+            >
+                <flux:icon name="arrow-path" class="size-6 animate-spin text-zinc-500" />
+            </div>
+            <div>
+                <flux:heading size="lg">Tugaskan Pembangun Web</flux:heading>
+                <flux:subheading>Pilih pembangun untuk menyelesaikan permohonan ini. Notifikasi emel akan dihantar.</flux:subheading>
+            </div>
+            <flux:select wire:model="teknisianId" label="Pembangun" placeholder="-- Pilih Pembangun --">
+                @foreach ($this->senaraiTeknisian as $teknisian)
+                    <flux:select.option value="{{ $teknisian->id }}">{{ $teknisian->name }} ({{ $teknisian->role->label() }})</flux:select.option>
+                @endforeach
+            </flux:select>
+            @error('teknisianId')
+                <p class="text-sm text-red-600">{{ $message }}</p>
+            @enderror
+            <flux:textarea wire:model="notaTugasan" label="Nota Tugasan (Pilihan)" placeholder="Arahan tambahan untuk pembangun..." rows="3" />
+            @error('notaTugasan')
+                <p class="text-sm text-red-600">{{ $message }}</p>
+            @enderror
+            <div class="flex gap-2">
+                <flux:spacer />
+                <flux:modal.close>
+                    <flux:button variant="ghost">Batal</flux:button>
+                </flux:modal.close>
+                <flux:button variant="primary" wire:click="tugaskanPembangun" @click="loading = true">
+                    Tugaskan
                 </flux:button>
             </div>
         </div>

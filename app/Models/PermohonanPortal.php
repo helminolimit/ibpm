@@ -47,9 +47,6 @@ class PermohonanPortal extends Model
      *
      * This scope enforces security at the database query level by filtering records
      * where pemohon_id matches the authenticated user's ID.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeMilikPemohon(Builder $query): Builder
     {
@@ -61,16 +58,12 @@ class PermohonanPortal extends Model
      *
      * This scope enables search functionality by filtering records where either
      * the ticket number OR the page URL contains the search query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $carian
-     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeCarian(Builder $query, string $carian): Builder
     {
         return $query->where(function ($q) use ($carian) {
             $q->where('no_tiket', 'like', "%{$carian}%")
-              ->orWhere('url_halaman', 'like', "%{$carian}%");
+                ->orWhere('url_halaman', 'like', "%{$carian}%");
         });
     }
 
@@ -92,5 +85,10 @@ class PermohonanPortal extends Model
     public function logAudits(): HasMany
     {
         return $this->hasMany(LogAuditPortal::class, 'permohonan_portal_id');
+    }
+
+    public function tugasans(): HasMany
+    {
+        return $this->hasMany(TugasanPortal::class, 'permohonan_portal_id');
     }
 }
