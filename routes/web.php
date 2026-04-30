@@ -3,8 +3,11 @@
 use App\Http\Controllers\Admin\PenatamatanAdminController;
 use App\Http\Controllers\KelulusanPeringkat1Controller;
 use App\Http\Controllers\PenatamatanAkaunController;
+use App\Http\Controllers\PermohonanPortalController;
 use App\Livewire\Admin;
 use App\Livewire\KemaskiniProfil;
+use App\Livewire\M04\SejarahPermohonan;
+use App\Livewire\Pentadbir\M04\PanelPermohonan;
 use App\Livewire\Permohonan\AduanIctForm;
 use App\Livewire\Permohonan\ButiranAduan;
 use App\Livewire\Permohonan\SenaraiAduan;
@@ -42,10 +45,10 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
 
     // M04 — Kemaskini Portal (Pengguna)
     Route::prefix('kemaskini-portal')->name('kemaskini-portal.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\PermohonanPortalController::class, 'index'])->name('index');
-        Route::get('/baru', [\App\Http\Controllers\PermohonanPortalController::class, 'create'])->name('create');
-        Route::get('/sejarah', \App\Livewire\M04\SejarahPermohonan::class)->name('sejarah')->middleware('role:pengguna');
-        Route::get('/{id}', [\App\Http\Controllers\PermohonanPortalController::class, 'show'])->name('show');
+        Route::get('/', [PermohonanPortalController::class, 'index'])->name('index');
+        Route::get('/baru', [PermohonanPortalController::class, 'create'])->name('create');
+        Route::get('/sejarah', SejarahPermohonan::class)->name('sejarah')->middleware('role:pengguna');
+        Route::get('/{id}', [PermohonanPortalController::class, 'show'])->name('show');
     });
 
     // M03 — Penamatan Akaun (Pemohon)
@@ -100,6 +103,14 @@ Route::middleware(['auth', 'verified', 'profile.complete', 'role:superadmin'])
         Route::livewire('pengguna', Superadmin\SenaraiPengguna::class)->name('pengguna.index');
         Route::livewire('peranan-akses', Superadmin\PerananAkses::class)->name('peranan-akses.index');
         Route::livewire('log-audit', Superadmin\LogAudit::class)->name('log-audit.index');
+    });
+
+// M04 — Panel Pentadbir Kemaskini Portal
+Route::middleware(['auth', 'verified', 'profile.complete', 'role:pentadbir,superadmin'])
+    ->prefix('admin/kemaskini-portal')
+    ->name('admin.kemaskini-portal.')
+    ->group(function () {
+        Route::livewire('/', PanelPermohonan::class)->name('index');
     });
 
 require __DIR__.'/settings.php';

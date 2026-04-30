@@ -258,13 +258,13 @@ This implementation plan covers the development of the M04 Sejarah Permohonan (A
     - Assert: Link text is the ticket number
     - _Requirements: 8.1, 8.2, 8.3_
 
-- [ ] 11. Write integration tests for security boundaries
-  - [-] 11.1 Create integration test file
+- [x] 11. Write integration tests for security boundaries
+  - [x] 11.1 Create integration test file
     - Create file: `tests/Integration/M04/SejarahPermohonanSecurityTest.php`
     - Add namespace and imports
     - _Requirements: 6.1, 6.4, 6.5, 6.6_
   
-  - [~] 11.2 Test users cannot access other users' applications
+  - [x] 11.2 Test users cannot access other users' applications
     - Test name: `test('users cannot access other users applications via query manipulation')`
     - Setup: Create application for user A with known ID
     - Action: Authenticate as user B, attempt to query PermohonanPortal directly with user A's application ID
@@ -272,7 +272,7 @@ This implementation plan covers the development of the M04 Sejarah Permohonan (A
     - Assert: Security filter is applied at database level
     - _Requirements: 6.4, 6.5, 6.6_
   
-  - [~] 11.3 Test search input is protected against SQL injection
+  - [x] 11.3 Test search input is protected against SQL injection
     - Test name: `test('search input is protected against SQL injection')`
     - Setup: Create applications for authenticated user
     - Action: GET `/kemaskini-portal/sejarah?carian='; DROP TABLE users; --`
@@ -281,7 +281,7 @@ This implementation plan covers the development of the M04 Sejarah Permohonan (A
     - Assert: No database tables are dropped
     - _Requirements: 3.1, 3.2, 3.3_
   
-  - [~] 11.4 Test search results are escaped to prevent XSS
+  - [x] 11.4 Test search results are escaped to prevent XSS
     - Test name: `test('search results are escaped to prevent XSS')`
     - Setup: Create application with URL containing `<script>alert('xss')</script>`
     - Action: GET `/kemaskini-portal/sejarah`
@@ -289,7 +289,7 @@ This implementation plan covers the development of the M04 Sejarah Permohonan (A
     - Assert: JavaScript is not executed
     - _Requirements: 2.2_
 
-- [~] 12. Final checkpoint - Ensure all tests pass
+- [x] 12. Final checkpoint - Ensure all tests pass
   - Run full test suite: `php artisan test`
   - Verify all unit tests pass
   - Verify all feature tests pass
