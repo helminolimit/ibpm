@@ -2,6 +2,7 @@
 
 use App\Livewire\Admin;
 use App\Livewire\KemaskiniProfil;
+use App\Livewire\M06\HantarPermohonan;
 use App\Livewire\Permohonan\AduanIctForm;
 use App\Livewire\Permohonan\ButiranAduan;
 use App\Livewire\Permohonan\SenaraiAduan;
@@ -36,6 +37,7 @@ Route::middleware(['auth', 'verified', 'profile.complete'])->group(function () {
     Route::livewire('senarai-saya', SenaraiAduan::class)->name('senarai-saya');
     Route::livewire('permohonan/aduan-ict/{id}', ButiranAduan::class)->name('aduan-ict.show');
     Route::view('permohonan/toner', 'pages.coming-soon')->name('toner.create');
+    Route::livewire('permohonan/kumpulan-emel', HantarPermohonan::class)->name('kumpulan-emel.create');
 });
 
 Route::middleware(['auth', 'verified', 'profile.complete', 'role:pentadbir,superadmin,teknician'])

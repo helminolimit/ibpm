@@ -82,6 +82,7 @@ class DatabaseSeeder extends Seeder
             PenggunaTeknisianSeeder::class,
             KategoriAduanSeeder::class,
             AduanIctSeeder::class,
+            KumpulanEmelSeeder::class,
         ]);
     }
 }
