@@ -6,6 +6,7 @@ uses(RefreshDatabase::class);
 
 use App\Enums\StatusPermohonanEmel;
 use App\Livewire\M06\HantarPermohonan;
+use App\Models\AhliKumpulan;
 use App\Models\KumpulanEmel;
 use App\Models\PermohonanEmel;
 use App\Models\User;
@@ -175,4 +176,77 @@ it('status defaults to baru on submission', function () {
         ->call('hantar');
 
     expect(PermohonanEmel::first()->status)->toBe(StatusPermohonanEmel::Baru);
+});
+
+// UC-M06-02: Tambah Ahli
+it('requires nama_ahli when jenis tindakan is tambah', function () {
+    actingAs($this->user);
+
+    Livewire::test(HantarPermohonan::class)
+        ->set('kumpulanEmelId', $this->kumpulan->id)
+        ->set('jenisTindakan', 'tambah')
+        ->set('ahli', [['nama_ahli' => '', 'emel_ahli' => 'ali@example.com']])
+        ->call('teruskan')
+        ->assertHasErrors(['ahli.0.nama_ahli' => 'required']);
+});
+
+it('saves tindakan=tambah on ahli_kumpulan records', function () {
+    actingAs($this->user);
+
+    Livewire::test(HantarPermohonan::class)
+        ->set('kumpulanEmelId', $this->kumpulan->id)
+        ->set('jenisTindakan', 'tambah')
+        ->set('ahli', [['nama_ahli' => 'Ali Ahmad', 'emel_ahli' => 'ali@example.com']])
+        ->call('teruskan')
+        ->call('hantar');
+
+    expect(AhliKumpulan::first()->tindakan->value)->toBe('tambah');
+});
+
+// UC-M06-03: Buang Ahli
+it('allows empty nama_ahli when jenis tindakan is buang', function () {
+    actingAs($this->user);
+
+    Livewire::test(HantarPermohonan::class)
+        ->set('kumpulanEmelId', $this->kumpulan->id)
+        ->set('jenisTindakan', 'buang')
+        ->set('ahli', [['nama_ahli' => '', 'emel_ahli' => 'ali@example.com']])
+        ->call('teruskan')
+        ->assertHasNoErrors()
+        ->assertSet('step', 2);
+});
+
+it('still requires emel_ahli when jenis tindakan is buang', function () {
+    actingAs($this->user);
+
+    Livewire::test(HantarPermohonan::class)
+        ->set('kumpulanEmelId', $this->kumpulan->id)
+        ->set('jenisTindakan', 'buang')
+        ->set('ahli', [['nama_ahli' => '', 'emel_ahli' => '']])
+        ->call('teruskan')
+        ->assertHasErrors(['ahli.0.emel_ahli' => 'required']);
+});
+
+it('saves tindakan=buang on ahli_kumpulan records', function () {
+    actingAs($this->user);
+
+    Livewire::test(HantarPermohonan::class)
+        ->set('kumpulanEmelId', $this->kumpulan->id)
+        ->set('jenisTindakan', 'buang')
+        ->set('ahli', [['nama_ahli' => '', 'emel_ahli' => 'ali@example.com']])
+        ->call('teruskan')
+        ->call('hantar');
+
+    expect(AhliKumpulan::first()->tindakan->value)->toBe('buang');
+});
+
+it('resets ahli rows when jenis tindakan changes', function () {
+    actingAs($this->user);
+
+    Livewire::test(HantarPermohonan::class)
+        ->set('jenisTindakan', 'tambah')
+        ->call('tambahAhli')
+        ->assertCount('ahli', 2)
+        ->set('jenisTindakan', 'buang')
+        ->assertCount('ahli', 1);
 });

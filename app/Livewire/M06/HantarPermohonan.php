@@ -33,12 +33,16 @@ class HantarPermohonan extends Component
 
     protected function rules(): array
     {
+        $namaAhliRule = $this->jenisTindakan === 'tambah'
+            ? ['required', 'string', 'max:255']
+            : ['nullable', 'string', 'max:255'];
+
         return [
             'kumpulanEmelId' => ['required', 'exists:kumpulan_emel,id'],
             'jenisTindakan' => ['required', 'in:tambah,buang'],
             'catatanPemohon' => ['nullable', 'string', 'max:500'],
             'ahli' => ['required', 'array', 'min:1'],
-            'ahli.*.nama_ahli' => ['required', 'string', 'max:255'],
+            'ahli.*.nama_ahli' => $namaAhliRule,
             'ahli.*.emel_ahli' => ['required', 'email'],
         ];
     }
@@ -88,6 +92,22 @@ class HantarPermohonan extends Component
         }
 
         return JenisTindakan::from($this->jenisTindakan)->label();
+    }
+
+    #[Computed]
+    public function sectionLabel(): string
+    {
+        return match ($this->jenisTindakan) {
+            'tambah' => 'Senarai Ahli Untuk Ditambah',
+            'buang' => 'Senarai Ahli Untuk Dibuang',
+            default => 'Senarai Ahli',
+        };
+    }
+
+    public function updatedJenisTindakan(): void
+    {
+        $this->ahli = [['nama_ahli' => '', 'emel_ahli' => '']];
+        $this->resetErrorBag('ahli');
     }
 
     public function tambahAhli(): void

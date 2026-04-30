@@ -64,27 +64,35 @@
                         <flux:error name="jenisTindakan" />
                     </flux:field>
 
-                    {{-- Senarai Ahli --}}
+                    {{-- Senarai Ahli (UC-M06-02: tambah / UC-M06-03: buang) --}}
                     <flux:field>
                         <flux:label>
-                            Senarai Ahli
+                            {{ $this->sectionLabel }}
                             <flux:badge size="sm" color="red" class="ml-1">Wajib</flux:badge>
                         </flux:label>
-                        <flux:description class="mb-3">Tambah semua ahli yang ingin ditambah atau dibuang daripada kumpulan.</flux:description>
+                        @if ($jenisTindakan === 'tambah')
+                            <flux:description class="mb-3">Isi nama dan emel setiap ahli yang hendak ditambah ke dalam kumpulan.</flux:description>
+                        @elseif ($jenisTindakan === 'buang')
+                            <flux:description class="mb-3">Isi emel ahli yang hendak dibuang daripada kumpulan.</flux:description>
+                        @else
+                            <flux:description class="mb-3">Sila pilih jenis tindakan dahulu.</flux:description>
+                        @endif
                         <flux:error name="ahli" />
 
                         <div class="space-y-3">
                             @foreach ($ahli as $i => $row)
                                 <div wire:key="ahli-{{ $i }}" class="flex items-start gap-3 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-900">
                                     <div class="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row">
-                                        <div class="flex-1">
-                                            <flux:input
-                                                wire:model="ahli.{{ $i }}.nama_ahli"
-                                                placeholder="Nama ahli"
-                                                size="sm"
-                                            />
-                                            <flux:error name="ahli.{{ $i }}.nama_ahli" />
-                                        </div>
+                                        @if ($jenisTindakan === 'tambah')
+                                            <div class="flex-1">
+                                                <flux:input
+                                                    wire:model="ahli.{{ $i }}.nama_ahli"
+                                                    placeholder="Nama penuh ahli"
+                                                    size="sm"
+                                                />
+                                                <flux:error name="ahli.{{ $i }}.nama_ahli" />
+                                            </div>
+                                        @endif
                                         <div class="flex-1">
                                             <flux:input
                                                 wire:model="ahli.{{ $i }}.emel_ahli"
@@ -192,14 +200,16 @@
 
                     {{-- Senarai Ahli --}}
                     <div>
-                        <flux:heading size="sm" class="mb-3 uppercase tracking-wide text-zinc-500">Senarai Ahli ({{ count($ahli) }} orang)</flux:heading>
+                        <flux:heading size="sm" class="mb-3 uppercase tracking-wide text-zinc-500">{{ $this->sectionLabel }} ({{ count($ahli) }} orang)</flux:heading>
                         <div class="space-y-2">
                             @foreach ($ahli as $i => $row)
                                 <div class="flex items-center gap-3 rounded-md border border-zinc-100 bg-zinc-50 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-800">
                                     <span class="w-6 text-center text-sm tabular-nums text-zinc-400">{{ $i + 1 }}</span>
                                     <div class="flex-1">
-                                        <flux:text class="font-medium">{{ $row['nama_ahli'] }}</flux:text>
-                                        <flux:text size="sm" class="text-zinc-400">{{ $row['emel_ahli'] }}</flux:text>
+                                        @if ($jenisTindakan === 'tambah' && $row['nama_ahli'])
+                                            <flux:text class="font-medium">{{ $row['nama_ahli'] }}</flux:text>
+                                        @endif
+                                        <flux:text size="sm" class="{{ $jenisTindakan === 'tambah' ? 'text-zinc-400' : 'font-medium' }}">{{ $row['emel_ahli'] }}</flux:text>
                                     </div>
                                 </div>
                             @endforeach
